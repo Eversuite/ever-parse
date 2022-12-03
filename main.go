@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
 	"os"
@@ -21,8 +22,9 @@ func main() {
 }
 
 type AbilityReference struct {
-	TableId string
-	Key     string
+	TableId      string
+	Key          string
+	SourceString string
 }
 
 type AbilityIcon struct {
@@ -65,7 +67,20 @@ func FilePathWalkDir(root string) {
 				abilities = append(abilities, abilityInfo)
 				copyImageFile(abilityMapping.AbilityIcon, id)
 			}
-
+			//Get skills which have strings directly in the abilities
+			if abilityMapping.AbilityName.TableId == "" && abilityMapping.AbilityName.SourceString != "" {
+				name := abilityMapping.AbilityName.SourceString
+				id := slug.Make(name)
+				abilityInfo := AbilityInfo{
+					id,
+					name,
+					abilityMapping.AbilityDescription.SourceString,
+				}
+				fmt.Println(path)
+				fmt.Println(abilityInfo)
+				abilities = append(abilities, abilityInfo)
+				copyImageFile(abilityMapping.AbilityIcon, id)
+			}
 		}
 		return nil
 	})
