@@ -18,24 +18,24 @@ func check(e error) {
 }
 
 func main() {
-	FilePathWalkDir(".")
+	ParseAbilities(".")
 }
 
-type AbilityReference struct {
+type PropertyReference struct {
 	TableId      string
 	Key          string
 	SourceString string
 }
 
-type AbilityIcon struct {
+type IconReference struct {
 	ObjectPath string
 }
 
 type AbilityMapping struct {
-	AbilityIcon          AbilityIcon
-	AbilityName          AbilityReference
-	AbilityDescription   AbilityReference
-	NextLevelPreviewText AbilityReference
+	AbilityIcon IconReference
+	AbilityName PropertyReference
+	AbilityDescription   PropertyReference
+	NextLevelPreviewText PropertyReference
 }
 
 type AbilityInfo struct {
@@ -44,7 +44,7 @@ type AbilityInfo struct {
 	Description string
 }
 
-func FilePathWalkDir(root string) {
+func ParseAbilities(root string) {
 	abilities := make([]AbilityInfo, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
@@ -100,7 +100,7 @@ func fixRoot(path string) string {
 	return strings.ReplaceAll(path, "/Game/", "Game/")
 }
 
-func getAbilityReferenceValue(abilityReference AbilityReference) string {
+func getAbilityReferenceValue(abilityReference PropertyReference) string {
 	correctRoot := fixRoot(abilityReference.TableId)
 	regex := regexp.MustCompile("\\..*")
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".json")
@@ -109,7 +109,7 @@ func getAbilityReferenceValue(abilityReference AbilityReference) string {
 	return gjson.Get(string(content), "#.StringTable.KeysToMetaData."+abilityReference.Key+"|0").String()
 }
 
-func copyImageFile(abilityIcon AbilityIcon, id string) {
+func copyImageFile(abilityIcon IconReference, id string) {
 	correctRoot := fixRoot(abilityIcon.ObjectPath)
 	regex := regexp.MustCompile("\\..*")
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".png")
@@ -117,4 +117,20 @@ func copyImageFile(abilityIcon AbilityIcon, id string) {
 	check(err)
 	err = os.WriteFile("./icons/"+id+".png", content, 0644)
 	check(err)
+}
+
+type CharacterMapping struct {
+	CharacterKitName PropertyReference
+	CharacterKitDescription PropertyReference
+}
+func parseCharacters(root string) {
+	characters := make([]AbilityInfo, 0)
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if strings.HasPrefix(info.Name(), "BP_Player_") {
+			content, err := os.ReadFile(path)
+			check(err)
+			characterRawJson := gjson.Get(string(content), "#(Type%\"BP_Player_*\")#|0.Properties").String()
+
+		}
+	}
 }
