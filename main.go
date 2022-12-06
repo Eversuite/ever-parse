@@ -11,8 +11,9 @@ import (
 	"strings"
 )
 
-func check(e error) {
+func check(e error, path string) {
 	if e != nil {
+		println(path)
 		panic(e)
 	}
 }
@@ -50,12 +51,16 @@ func ParseAbilities(root string) {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
 			content, err := os.ReadFile(path)
-			check(err)
+			check(err, path)
 			//Parse the ability mappings
 			abilityRawJson := gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
 			var abilityMapping AbilityMapping
 			err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
-			check(err)
+			if err != nil {
+				println("Failed to parse: " + path)
+				return nil
+			}
+			check(err, path)
 			//fmt.Println(path)
 			//Check that it uses references for its data
 			if abilityMapping.AbilityName.TableId != "" {
@@ -85,16 +90,16 @@ func ParseAbilities(root string) {
 		}
 		return nil
 	})
-	check(err)
+	check(err, "")
 
 	f, _ := os.Create("abilities.json")
 	enc := json.NewEncoder(f)
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", " ")
 	err = enc.Encode(abilities)
-	check(err)
+	check(err, "")
 	err = f.Close()
-	check(err)
+	check(err, "")
 }
 
 func fixRoot(path string) string {
@@ -106,7 +111,7 @@ func getReferenceValue(propertyReference PropertyReference) string {
 	regex := regexp.MustCompile("\\..*")
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".json")
 	content, err := os.ReadFile(cleanedPath)
-	check(err)
+	check(err, "")
 	return gjson.Get(string(content), "#.StringTable.KeysToMetaData."+propertyReference.Key+"|0").String()
 }
 
@@ -115,9 +120,9 @@ func copyImageFile(abilityIcon ImageReference, id string) {
 	regex := regexp.MustCompile("\\..*")
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".png")
 	content, err := os.ReadFile(cleanedPath)
-	check(err)
+	check(err, "")
 	err = os.WriteFile("./icons/"+id+".png", content, 0644)
-	check(err)
+	check(err, "")
 }
 
 type CharacterMapping struct {
@@ -126,12 +131,14 @@ type CharacterMapping struct {
 	CharacterKitRole          PropertyReference
 	CharacterDefaultSkinImage ImageReference
 	CharacterPreviewImage     ImageReference
+	CharacterPortrait         ImageReference
 }
 
 type CharacterInfo struct {
 	Id          string
 	Name        string
 	Description string
+	Role        string
 }
 
 func parseCharacters(root string) {
@@ -139,34 +146,36 @@ func parseCharacters(root string) {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if strings.HasPrefix(info.Name(), "BP_Player_") {
 			content, err := os.ReadFile(path)
-			check(err)
+			check(err, path)
 			characterRawJson := gjson.Get(string(content), "#(Type%\"BP_Player_*\")#|0.Properties").String()
 			var characterMapping CharacterMapping
 			err = json.Unmarshal([]byte(characterRawJson), &characterMapping)
-			check(err)
+			check(err, path)
 			if characterMapping.CharacterKitDescription.TableId != "" {
 				name := getReferenceValue(characterMapping.CharacterKitName)
 				id := slug.Make(name)
 				characterInfo := CharacterInfo{
 					id,
 					name,
-					getReferenceValue(characterMapping.CharacterKitDescription)}
+					getReferenceValue(characterMapping.CharacterKitDescription),
+					getReferenceValue(characterMapping.CharacterKitRole)}
 				fmt.Println(path)
 				fmt.Println(characterInfo)
 				characters = append(characters, characterInfo)
 				copyImageFile(characterMapping.CharacterPreviewImage, id+"_preview")
 				copyImageFile(characterMapping.CharacterDefaultSkinImage, id+"_default")
+				copyImageFile(characterMapping.CharacterPortrait, id+"_portrait")
 			}
 		}
 		return nil
 	})
-	check(err)
+	check(err, "")
 	f, _ := os.Create("characters.json")
 	enc := json.NewEncoder(f)
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", " ")
 	err = enc.Encode(characters)
-	check(err)
+	check(err, "")
 	err = f.Close()
-	check(err)
+	check(err, "")
 }
