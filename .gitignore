@@ -100,3 +100,8 @@ fabric.properties
 # Go workspace file
 go.work
 
+Game
+OLD_Game
+icons
+abilities.json
+characters.json
