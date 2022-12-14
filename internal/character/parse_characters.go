@@ -55,9 +55,9 @@ func ParseCharacters(root string) {
 				fmt.Println(path)
 				fmt.Println(characterInfo)
 				characters = append(characters, characterInfo)
-				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"_preview")
-				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"_default")
-				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"_portrait")
+				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
+				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
+				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait")
 			}
 		}
 		return nil

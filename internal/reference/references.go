@@ -1,10 +1,12 @@
 package reference
 
 import (
+	"bytes"
 	"github.com/tidwall/gjson"
 	"os"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 type PropertyReference struct {
@@ -34,6 +36,22 @@ func CopyImageFile(abilityIcon ImageReference, id string) {
 	check(err, "")
 	err = os.WriteFile("./icons/"+id+".png", content, 0644)
 	check(err, "")
+}
+
+func AbilitySource(path string) string {
+	folders := strings.Split(path, "/")
+	return addSpace(folders[3])
+}
+
+func addSpace(s string) string {
+	buf := &bytes.Buffer{}
+	for i, character := range s {
+		if unicode.IsUpper(character) && i > 0 {
+			buf.WriteRune(' ')
+		}
+		buf.WriteRune(character)
+	}
+	return buf.String()
 }
 
 func fixRoot(path string) string {

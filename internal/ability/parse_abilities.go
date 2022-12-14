@@ -11,28 +11,29 @@ import (
 	"strings"
 )
 
-type AbilityMapping struct {
+type Mapping struct {
 	AbilityIcon          reference.ImageReference
 	AbilityName          reference.PropertyReference
 	AbilityDescription   reference.PropertyReference
 	NextLevelPreviewText reference.PropertyReference
 }
 
-type AbilityInfo struct {
+type Info struct {
 	Id          string
 	Name        string
 	Description string
+	Source      string
 }
 
 func ParseAbilities(root string) {
-	abilities := make([]AbilityInfo, 0)
+	abilities := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
 			content, err := os.ReadFile(path)
 			check(err, path)
 			//Parse the ability mappings
 			abilityRawJson := gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
-			var abilityMapping AbilityMapping
+			var abilityMapping Mapping
 			err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
 			if err != nil {
 				println("Failed to parse: " + path)
@@ -44,10 +45,12 @@ func ParseAbilities(root string) {
 			if abilityMapping.AbilityName.TableId != "" {
 				name := reference.GetReferenceValue(abilityMapping.AbilityName)
 				id := slug.Make(name)
-				abilityInfo := AbilityInfo{
+				abilityInfo := Info{
 					id,
 					name,
-					reference.GetReferenceValue(abilityMapping.AbilityDescription)}
+					reference.GetReferenceValue(abilityMapping.AbilityDescription),
+					slug.Make(reference.AbilitySource(path)),
+				}
 				abilities = append(abilities, abilityInfo)
 				reference.CopyImageFile(abilityMapping.AbilityIcon, id)
 			}
@@ -55,10 +58,11 @@ func ParseAbilities(root string) {
 			if abilityMapping.AbilityName.TableId == "" && abilityMapping.AbilityName.SourceString != "" {
 				name := abilityMapping.AbilityName.SourceString
 				id := slug.Make(name)
-				abilityInfo := AbilityInfo{
+				abilityInfo := Info{
 					id,
 					name,
 					abilityMapping.AbilityDescription.SourceString,
+					slug.Make(reference.AbilitySource(path)),
 				}
 				fmt.Println(path)
 				fmt.Println(abilityInfo)
