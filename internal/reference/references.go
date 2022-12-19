@@ -39,12 +39,13 @@ func CopyImageFile(abilityIcon ImageReference, id string) {
 }
 
 func CharacterCode(path string) string {
-	folders := strings.Split(path, "/")
+	folders := strings.Split(path, string(os.PathSeparator))
+	println(path)
 	return addSpace(folders[4])
 }
 
 func AbilitySource(path string) string {
-	folders := strings.Split(path, "/")
+	folders := strings.Split(path, string(os.PathSeparator))
 	return addSpace(folders[3])
 }
 

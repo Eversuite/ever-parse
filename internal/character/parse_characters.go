@@ -51,7 +51,24 @@ func ParseCharacters(root string) {
 					id,
 					name,
 					reference.GetReferenceValue(characterMapping.CharacterKitDescription),
-					reference.GetReferenceValue(characterMapping.CharacterKitRole)}
+					reference.GetReferenceValue(characterMapping.CharacterKitRole),
+				}
+				fmt.Println(path)
+				fmt.Println(characterInfo)
+				characters = append(characters, characterInfo)
+				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
+				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
+				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait")
+			}
+			if characterMapping.CharacterKitDescription.TableId == "" && characterMapping.CharacterKitDescription.SourceString != "" {
+				name := characterMapping.CharacterKitName.SourceString
+				id := slug.Make(reference.CharacterCode(path))
+				characterInfo := Info{
+					id,
+					name,
+					characterMapping.CharacterKitDescription.SourceString,
+					characterMapping.CharacterKitRole.SourceString,
+				}
 				fmt.Println(path)
 				fmt.Println(characterInfo)
 				characters = append(characters, characterInfo)
