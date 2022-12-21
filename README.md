@@ -34,4 +34,7 @@ Script for parsing data from Evercore Heroes after it's been exported.
 4. A folder called Output will be located in the same place as FModel.exe and the export can be found under Exports
 
 ## Parsing the Extracted Data
-TODO: Explain how to copy data to parser project and rename/merge folder.
+1. Create a folder called "Game" in the root directory
+2. Copy folders in the exported content folder `Output\Exports\ProjectV\Content` to the Game folder in root
+3. Run "main .go" file
+4. A abilities.json and characters.json should be created in the root.
