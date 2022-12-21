@@ -44,7 +44,7 @@ func ParseAbilities(root string) {
 			//Check that it uses references for its data
 			if abilityMapping.AbilityName.TableId != "" {
 				name := reference.GetReferenceValue(abilityMapping.AbilityName)
-				id := slug.Make(name)
+				id := slug.Make(reference.AbilityId(path))
 				abilityInfo := Info{
 					id,
 					name,
@@ -57,7 +57,7 @@ func ParseAbilities(root string) {
 			//Get skills which have strings directly in the abilities
 			if abilityMapping.AbilityName.TableId == "" && abilityMapping.AbilityName.SourceString != "" {
 				name := abilityMapping.AbilityName.SourceString
-				id := slug.Make(name)
+				id := slug.Make(reference.AbilityId(path))
 				abilityInfo := Info{
 					id,
 					name,

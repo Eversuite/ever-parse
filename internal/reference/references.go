@@ -38,9 +38,23 @@ func CopyImageFile(abilityIcon ImageReference, id string) {
 	check(err, "")
 }
 
-func CharacterCode(path string) string {
+func AbilityId(path string) string {
+	delimiter := "BP_UIAbility_"
+	pos := strings.LastIndex(path, delimiter)
+	if pos == -1 {
+		return ""
+	}
+	adjustedPos := pos + len(delimiter)
+	if adjustedPos >= len(path) {
+		return ""
+	}
+	rawAbilityName := path[adjustedPos:]
+	removedFileEnding := strings.ReplaceAll(rawAbilityName, ".json", "")
+	return addSpace(strings.ReplaceAll(removedFileEnding, "_", "-"))
+}
+
+func CharacterId(path string) string {
 	folders := strings.Split(path, string(os.PathSeparator))
-	println(path)
 	return addSpace(folders[4])
 }
 

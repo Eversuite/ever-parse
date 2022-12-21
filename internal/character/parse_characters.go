@@ -46,7 +46,7 @@ func ParseCharacters(root string) {
 			check(err, path)
 			if characterMapping.CharacterKitDescription.TableId != "" {
 				name := reference.GetReferenceValue(characterMapping.CharacterKitName)
-				id := slug.Make(reference.CharacterCode(path))
+				id := slug.Make(reference.CharacterId(path))
 				characterInfo := Info{
 					id,
 					name,
@@ -62,7 +62,7 @@ func ParseCharacters(root string) {
 			}
 			if characterMapping.CharacterKitDescription.TableId == "" && characterMapping.CharacterKitDescription.SourceString != "" {
 				name := characterMapping.CharacterKitName.SourceString
-				id := slug.Make(reference.CharacterCode(path))
+				id := slug.Make(reference.CharacterId(path))
 				characterInfo := Info{
 					id,
 					name,
