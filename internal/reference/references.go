@@ -29,6 +29,9 @@ func GetReferenceValue(propertyReference PropertyReference) string {
 }
 
 func CopyImageFile(abilityIcon ImageReference, id string) {
+	if abilityIcon.ObjectPath == "" {
+		return
+	}
 	correctRoot := fixRoot(abilityIcon.ObjectPath)
 	regex := regexp.MustCompile("\\..*")
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".png")
