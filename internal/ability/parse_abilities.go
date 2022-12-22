@@ -13,10 +13,11 @@ import (
 )
 
 type Mapping struct {
-	AbilityIcon          reference.ImageReference
-	AbilityName          reference.PropertyReference
-	AbilityDescription   reference.PropertyReference
-	NextLevelPreviewText reference.PropertyReference
+	AbilityIcon                      reference.ImageReference
+	AbilityName                      reference.PropertyReference
+	AbilityDescription               reference.PropertyReference
+	NextLevelPreviewText             reference.PropertyReference
+	DescriptionValuesFromCurveTables reference.CurveTableReference
 }
 
 type Info struct {
@@ -24,6 +25,7 @@ type Info struct {
 	Name        string
 	Description string
 	Source      string
+	Properties  map[string][]reference.CurvePoint
 }
 
 func ParseAbilities(root string) {
@@ -41,8 +43,6 @@ func ParseAbilities(root string) {
 				return nil
 			}
 			util.Check(err, path)
-			//fmt.Println(path)
-			//util.Check that it uses references for its data
 			if abilityMapping.AbilityName.TableId != "" {
 				name := reference.GetReferenceValue(abilityMapping.AbilityName)
 				id := slug.Make(reference.AbilityId(path))
@@ -51,6 +51,7 @@ func ParseAbilities(root string) {
 					name,
 					reference.GetReferenceValue(abilityMapping.AbilityDescription),
 					slug.Make(reference.AbilitySource(path)),
+					abilityMapping.DescriptionValuesFromCurveTables.GetValues(),
 				}
 				abilities = append(abilities, abilityInfo)
 				reference.CopyImageFile(abilityMapping.AbilityIcon, id)
@@ -64,6 +65,7 @@ func ParseAbilities(root string) {
 					name,
 					abilityMapping.AbilityDescription.SourceString,
 					slug.Make(reference.AbilitySource(path)),
+					abilityMapping.DescriptionValuesFromCurveTables.GetValues(),
 				}
 				fmt.Println(path)
 				fmt.Println(abilityInfo)

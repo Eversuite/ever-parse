@@ -2,6 +2,7 @@ package reference
 
 import (
 	"bytes"
+	"encoding/json"
 	"ever-parse/internal/util"
 	"github.com/tidwall/gjson"
 	"io/fs"
@@ -19,6 +20,49 @@ type PropertyReference struct {
 
 type ImageReference struct {
 	ObjectPath string
+}
+
+type CurveTableReference map[string]CurveTableReferenceEntry
+
+type CurveTableReferenceEntry struct {
+	CurveTable struct {
+		ObjectPath string
+	}
+	RowName string
+}
+
+type CurvePoint struct {
+	Time  float64
+	Value float64
+}
+
+const NONE_NAME string = "None"
+
+func (c CurveTableReference) GetValues() (result map[string][]CurvePoint) {
+	result = make(map[string][]CurvePoint, len(c))
+	for key, entry := range c {
+		points := entry.getValue()
+		result[key] = points
+	}
+	return
+}
+
+func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
+	if ce.RowName == NONE_NAME || len(ce.CurveTable.ObjectPath) == 0 {
+		return
+	}
+	correctRoot := fixRoot(ce.CurveTable.ObjectPath)
+	regex := regexp.MustCompile("\\..*")
+	cleanedPath := regex.ReplaceAllString(correctRoot, ".json")
+	content, err := os.ReadFile(cleanedPath)
+	util.Check(err, ce, correctRoot, cleanedPath)
+	curvePointsJson := gjson.Get(string(content), "#.Rows."+ce.RowName+".Keys|0").String()
+	if len(curvePointsJson) == 0 {
+		return
+	}
+	err = json.Unmarshal([]byte(curvePointsJson), &curvePoints)
+	util.Check(err, ce.CurveTable.ObjectPath, ce.RowName, curvePointsJson)
+	return
 }
 
 func GetReferenceValue(propertyReference PropertyReference) string {
