@@ -37,6 +37,7 @@ func (m Mapping) GetDescriptionProperty() reference.PropertyReference {
 
 func ParseAbilities(root string) {
 	abilities := make([]Info, 0)
+	shards := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
 			content, err := os.ReadFile(path)
@@ -58,21 +59,39 @@ func ParseAbilities(root string) {
 				slug.Make(reference.AbilitySource(path)),
 				getAbilityProps(abilityMapping),
 			}
-			abilities = append(abilities, abilityInfo)
+
+			if abilityInfo.Source == "shards" {
+				shards = append(shards, abilityInfo)
+			} else {
+				abilities = append(abilities, abilityInfo)
+			}
+
 			reference.CopyImageFile(abilityMapping.AbilityIcon, id)
 		}
 		return nil
 	})
 	util.Check(err)
 
-	f, _ := os.Create("abilities.json")
+	err = writeInfo("abilities.json", abilities)
+	util.Check(err, "abilities.json", abilities)
+	err = writeInfo("shards.json", shards)
+	util.Check(err, "shards.json", shards)
+
+}
+
+func writeInfo(file string, infos []Info) error {
+	f, err := os.Create(file)
+	if err != nil {
+		return err
+	}
 	enc := json.NewEncoder(f)
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", " ")
-	err = enc.Encode(abilities)
-	util.Check(err, abilities)
-	err = f.Close()
-	util.Check(err, f)
+	err = enc.Encode(infos)
+	if err != nil {
+		return err
+	}
+	return f.Close()
 }
 
 func getAbilityProps(abilityMapping Mapping) string {
