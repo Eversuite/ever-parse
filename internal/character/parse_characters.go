@@ -3,6 +3,7 @@ package character
 import (
 	"encoding/json"
 	"ever-parse/internal/reference"
+	"ever-parse/internal/util"
 	"fmt"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
@@ -10,13 +11,6 @@ import (
 	"path/filepath"
 	"strings"
 )
-
-func check(e error, path string) {
-	if e != nil {
-		println(path)
-		panic(e)
-	}
-}
 
 type Mapping struct {
 	CharacterKitName          reference.PropertyReference
@@ -39,11 +33,11 @@ func ParseCharacters(root string) {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if strings.HasPrefix(info.Name(), "BP_Player_") {
 			content, err := os.ReadFile(path)
-			check(err, path)
+			util.Check(err, path)
 			characterRawJson := gjson.Get(string(content), "#(Type%\"BP_Player_*\")#|0.Properties").String()
 			var characterMapping Mapping
 			err = json.Unmarshal([]byte(characterRawJson), &characterMapping)
-			check(err, path)
+			util.Check(err, path)
 			if characterMapping.CharacterKitDescription.TableId != "" {
 				name := reference.GetReferenceValue(characterMapping.CharacterKitName)
 				id := slug.Make(reference.CharacterId(path))
@@ -79,13 +73,13 @@ func ParseCharacters(root string) {
 		}
 		return nil
 	})
-	check(err, "")
+	util.Check(err)
 	f, _ := os.Create("characters.json")
 	enc := json.NewEncoder(f)
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", " ")
 	err = enc.Encode(characters)
-	check(err, "")
+	util.Check(err, characters)
 	err = f.Close()
-	check(err, "")
+	util.Check(err, "Unable to close file")
 }

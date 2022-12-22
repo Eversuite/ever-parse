@@ -3,6 +3,7 @@ package ability
 import (
 	"encoding/json"
 	"ever-parse/internal/reference"
+	"ever-parse/internal/util"
 	"fmt"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
@@ -30,7 +31,7 @@ func ParseAbilities(root string) {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
 			content, err := os.ReadFile(path)
-			check(err, path)
+			util.Check(err, path)
 			//Parse the ability mappings
 			abilityRawJson := gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
 			var abilityMapping Mapping
@@ -39,9 +40,9 @@ func ParseAbilities(root string) {
 				println("Failed to parse: " + path)
 				return nil
 			}
-			check(err, path)
+			util.Check(err, path)
 			//fmt.Println(path)
-			//Check that it uses references for its data
+			//util.Check that it uses references for its data
 			if abilityMapping.AbilityName.TableId != "" {
 				name := reference.GetReferenceValue(abilityMapping.AbilityName)
 				id := slug.Make(reference.AbilityId(path))
@@ -72,21 +73,14 @@ func ParseAbilities(root string) {
 		}
 		return nil
 	})
-	check(err, "")
+	util.Check(err)
 
 	f, _ := os.Create("abilities.json")
 	enc := json.NewEncoder(f)
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", " ")
 	err = enc.Encode(abilities)
-	check(err, "")
+	util.Check(err, abilities)
 	err = f.Close()
-	check(err, "")
-}
-
-func check(e error, path string) {
-	if e != nil {
-		println(path)
-		panic(e)
-	}
+	util.Check(err, f)
 }

@@ -2,6 +2,7 @@ package reference
 
 import (
 	"bytes"
+	"ever-parse/internal/util"
 	"github.com/tidwall/gjson"
 	"os"
 	"regexp"
@@ -24,7 +25,7 @@ func GetReferenceValue(propertyReference PropertyReference) string {
 	regex := regexp.MustCompile("\\..*")
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".json")
 	content, err := os.ReadFile(cleanedPath)
-	check(err, "")
+	util.Check(err, cleanedPath)
 	return gjson.Get(string(content), "#.StringTable.KeysToMetaData."+propertyReference.Key+"|0").String()
 }
 
@@ -36,9 +37,9 @@ func CopyImageFile(abilityIcon ImageReference, id string) {
 	regex := regexp.MustCompile("\\..*")
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".png")
 	content, err := os.ReadFile(cleanedPath)
-	check(err, "")
+	util.Check(err, cleanedPath)
 	err = os.WriteFile("./icons/"+id+".png", content, 0644)
-	check(err, "")
+	util.Check(err, content)
 }
 
 func AbilityId(path string) string {
@@ -79,11 +80,4 @@ func addSpace(s string) string {
 
 func fixRoot(path string) string {
 	return strings.ReplaceAll(path, "/Game/", "Game/")
-}
-
-func check(e error, path string) {
-	if e != nil {
-		println(path)
-		panic(e)
-	}
 }
