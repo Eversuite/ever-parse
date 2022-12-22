@@ -46,6 +46,10 @@ type DataMapping interface {
 	GetDescriptionProperty() PropertyReference
 }
 
+type CurvePropertiesMapping interface {
+	GetCurveProperty() CurveTableReference
+}
+
 const noneName string = "None"
 
 var whitespaceRegex = regexp.MustCompile("\\s")
@@ -76,6 +80,16 @@ func GetDescription(m DataMapping) string {
 	}
 
 	return "UnknownDescriptionProperty"
+}
+
+func GetCurveProperties(m CurvePropertiesMapping) string {
+	abilityProps := ""
+	if m.GetCurveProperty() != nil {
+		jsonBytes, err := json.Marshal(m.GetCurveProperty().GetValues())
+		util.Check(err, m)
+		abilityProps = string(jsonBytes)
+	}
+	return abilityProps
 }
 
 func (c CurveTableReference) GetValues() map[string][]CurvePoint {

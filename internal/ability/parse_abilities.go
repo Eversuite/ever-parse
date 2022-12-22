@@ -35,10 +35,16 @@ func (m Mapping) GetDescriptionProperty() reference.PropertyReference {
 	return m.AbilityDescription
 }
 
+func (m Mapping) GetCurveProperty() reference.CurveTableReference {
+	return m.DescriptionValuesFromCurveTables
+}
+
 func ParseAbilities(root string) {
 	abilities := make([]Info, 0)
-	shards := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() && info.Name() == "Shards" {
+			return filepath.SkipDir
+		}
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
 			content, err := os.ReadFile(path)
 			util.Check(err, path)
@@ -57,14 +63,10 @@ func ParseAbilities(root string) {
 				reference.GetName(abilityMapping),
 				reference.GetDescription(abilityMapping),
 				slug.Make(reference.AbilitySource(path)),
-				getAbilityProps(abilityMapping),
+				reference.GetCurveProperties(abilityMapping),
 			}
 
-			if abilityInfo.Source == "shards" {
-				shards = append(shards, abilityInfo)
-			} else {
-				abilities = append(abilities, abilityInfo)
-			}
+			abilities = append(abilities, abilityInfo)
 
 			reference.CopyImageFile(abilityMapping.AbilityIcon, id)
 		}
@@ -72,34 +74,7 @@ func ParseAbilities(root string) {
 	})
 	util.Check(err)
 
-	err = writeInfo("abilities.json", abilities)
+	err = util.WriteInfo("abilities.json", abilities)
 	util.Check(err, "abilities.json", abilities)
-	err = writeInfo("shards.json", shards)
-	util.Check(err, "shards.json", shards)
 
-}
-
-func writeInfo(file string, infos []Info) error {
-	f, err := os.Create(file)
-	if err != nil {
-		return err
-	}
-	enc := json.NewEncoder(f)
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", " ")
-	err = enc.Encode(infos)
-	if err != nil {
-		return err
-	}
-	return f.Close()
-}
-
-func getAbilityProps(abilityMapping Mapping) string {
-	abilityProps := ""
-	if abilityMapping.DescriptionValuesFromCurveTables != nil {
-		bytes, err := json.Marshal(abilityMapping.DescriptionValuesFromCurveTables.GetValues())
-		util.Check(err, abilityMapping)
-		abilityProps = string(bytes)
-	}
-	return abilityProps
 }
