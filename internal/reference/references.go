@@ -36,19 +36,21 @@ type CurvePoint struct {
 	Value float64
 }
 
-const NONE_NAME string = "None"
+const noneName string = "None"
 
-func (c CurveTableReference) GetValues() (result map[string][]CurvePoint) {
-	result = make(map[string][]CurvePoint, len(c))
+var whitespaceRegex = regexp.MustCompile("\\s")
+
+func (c CurveTableReference) GetValues() map[string][]CurvePoint {
+	result := make(map[string][]CurvePoint, len(c))
 	for key, entry := range c {
 		points := entry.getValue()
 		result[key] = points
 	}
-	return
+	return result
 }
 
 func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
-	if ce.RowName == NONE_NAME || len(ce.CurveTable.ObjectPath) == 0 {
+	if ce.RowName == noneName || len(ce.CurveTable.ObjectPath) == 0 {
 		return
 	}
 	correctRoot := fixRoot(ce.CurveTable.ObjectPath)
@@ -57,6 +59,7 @@ func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, ce, correctRoot, cleanedPath)
 	curvePointsJson := gjson.Get(string(content), "#.Rows."+ce.RowName+".Keys|0").String()
+	curvePointsJson = whitespaceRegex.ReplaceAllString(curvePointsJson, "")
 	if len(curvePointsJson) == 0 {
 		return
 	}

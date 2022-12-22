@@ -17,7 +17,7 @@ type Mapping struct {
 	AbilityName                      reference.PropertyReference
 	AbilityDescription               reference.PropertyReference
 	NextLevelPreviewText             reference.PropertyReference
-	DescriptionValuesFromCurveTables reference.CurveTableReference
+	DescriptionValuesFromCurveTables reference.CurveTableReference `json:"omitempty"`
 }
 
 type Info struct {
@@ -25,7 +25,7 @@ type Info struct {
 	Name        string
 	Description string
 	Source      string
-	Properties  map[string][]reference.CurvePoint
+	Properties  string
 }
 
 func ParseAbilities(root string) {
@@ -43,15 +43,22 @@ func ParseAbilities(root string) {
 				return nil
 			}
 			util.Check(err, path)
+			abilityProps := ""
+			if abilityMapping.DescriptionValuesFromCurveTables != nil {
+				bytes, err := json.Marshal(abilityMapping.DescriptionValuesFromCurveTables.GetValues())
+				util.Check(err, abilityMapping)
+				abilityProps = string(bytes)
+			}
 			if abilityMapping.AbilityName.TableId != "" {
 				name := reference.GetReferenceValue(abilityMapping.AbilityName)
 				id := slug.Make(reference.AbilityId(path))
+				util.Check(err)
 				abilityInfo := Info{
 					id,
 					name,
 					reference.GetReferenceValue(abilityMapping.AbilityDescription),
 					slug.Make(reference.AbilitySource(path)),
-					abilityMapping.DescriptionValuesFromCurveTables.GetValues(),
+					abilityProps,
 				}
 				abilities = append(abilities, abilityInfo)
 				reference.CopyImageFile(abilityMapping.AbilityIcon, id)
@@ -65,7 +72,7 @@ func ParseAbilities(root string) {
 					name,
 					abilityMapping.AbilityDescription.SourceString,
 					slug.Make(reference.AbilitySource(path)),
-					abilityMapping.DescriptionValuesFromCurveTables.GetValues(),
+					abilityProps,
 				}
 				fmt.Println(path)
 				fmt.Println(abilityInfo)
