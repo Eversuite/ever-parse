@@ -22,8 +22,11 @@ type ImageReference struct {
 	ObjectPath string
 }
 
+// CurveTableReference type alias to work with reference entries.
+// The CurveTableReference contains an arbitrary amount of properties with their corresponding CurveTable references.
 type CurveTableReference map[string]CurveTableReferenceEntry
 
+// CurveTableReferenceEntry contains a reference to the CurveTable and its corresponding row associated with the property
 type CurveTableReferenceEntry struct {
 	CurveTable struct {
 		ObjectPath string
@@ -36,9 +39,44 @@ type CurvePoint struct {
 	Value float64
 }
 
+// DataMapping is an interface for mapping types which grant access to a "name" property and "description" property.
+// The properties must be PropertyReference s
+type DataMapping interface {
+	GetNameProperty() PropertyReference
+	GetDescriptionProperty() PropertyReference
+}
+
 const noneName string = "None"
 
 var whitespaceRegex = regexp.MustCompile("\\s")
+var jsonRegex = regexp.MustCompile("\\..*")
+
+// GetName resolves the actual name for the "name"-property of the DataMapping.
+// This is either done by resolving the corresponding table entry or the property's own `SourceString`-entry.
+func GetName(m DataMapping) string {
+	if m.GetNameProperty().TableId != "" {
+		return GetReferenceValue(m.GetNameProperty())
+	}
+
+	if m.GetNameProperty().SourceString != "" {
+		return m.GetNameProperty().SourceString
+	}
+
+	return "UnknownNameProperty"
+}
+
+// GetDescription resolves the actual description for the "Description"-property of the DataMapping.
+func GetDescription(m DataMapping) string {
+	if m.GetNameProperty().TableId != "" {
+		return GetReferenceValue(m.GetDescriptionProperty())
+	}
+
+	if m.GetNameProperty().SourceString != "" {
+		return m.GetDescriptionProperty().SourceString
+	}
+
+	return "UnknownDescriptionProperty"
+}
 
 func (c CurveTableReference) GetValues() map[string][]CurvePoint {
 	result := make(map[string][]CurvePoint, len(c))
@@ -54,8 +92,7 @@ func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
 		return
 	}
 	correctRoot := fixRoot(ce.CurveTable.ObjectPath)
-	regex := regexp.MustCompile("\\..*")
-	cleanedPath := regex.ReplaceAllString(correctRoot, ".json")
+	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".json")
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, ce, correctRoot, cleanedPath)
 	curvePointsJson := gjson.Get(string(content), "#.Rows."+ce.RowName+".Keys|0").String()
@@ -70,10 +107,9 @@ func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
 
 func GetReferenceValue(propertyReference PropertyReference) string {
 	correctRoot := fixRoot(propertyReference.TableId)
-	regex := regexp.MustCompile("\\..*")
-	cleanedPath := regex.ReplaceAllString(correctRoot, ".json")
+	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".json")
 	content, err := os.ReadFile(cleanedPath)
-	util.Check(err, cleanedPath)
+	util.Check(err, propertyReference, correctRoot, cleanedPath)
 	return gjson.Get(string(content), "#.StringTable.KeysToMetaData."+propertyReference.Key+"|0").String()
 }
 
@@ -82,8 +118,7 @@ func CopyImageFile(abilityIcon ImageReference, id string) {
 		return
 	}
 	correctRoot := fixRoot(abilityIcon.ObjectPath)
-	regex := regexp.MustCompile("\\..*")
-	cleanedPath := regex.ReplaceAllString(correctRoot, ".png")
+	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".png")
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, cleanedPath)
 	err = os.MkdirAll("./icons", fs.ModeDir)

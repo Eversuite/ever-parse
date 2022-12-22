@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
-	"fmt"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
 	"os"
@@ -17,7 +16,7 @@ type Mapping struct {
 	AbilityName                      reference.PropertyReference
 	AbilityDescription               reference.PropertyReference
 	NextLevelPreviewText             reference.PropertyReference
-	DescriptionValuesFromCurveTables reference.CurveTableReference `json:"omitempty"`
+	DescriptionValuesFromCurveTables reference.CurveTableReference
 }
 
 type Info struct {
@@ -26,6 +25,14 @@ type Info struct {
 	Description string
 	Source      string
 	Properties  string
+}
+
+func (m Mapping) GetNameProperty() reference.PropertyReference {
+	return m.AbilityName
+}
+
+func (m Mapping) GetDescriptionProperty() reference.PropertyReference {
+	return m.AbilityDescription
 }
 
 func ParseAbilities(root string) {
@@ -43,42 +50,16 @@ func ParseAbilities(root string) {
 				return nil
 			}
 			util.Check(err, path)
-			abilityProps := ""
-			if abilityMapping.DescriptionValuesFromCurveTables != nil {
-				bytes, err := json.Marshal(abilityMapping.DescriptionValuesFromCurveTables.GetValues())
-				util.Check(err, abilityMapping)
-				abilityProps = string(bytes)
+			id := slug.Make(reference.AbilityId(path))
+			abilityInfo := Info{
+				id,
+				reference.GetName(abilityMapping),
+				reference.GetDescription(abilityMapping),
+				slug.Make(reference.AbilitySource(path)),
+				getAbilityProps(abilityMapping),
 			}
-			if abilityMapping.AbilityName.TableId != "" {
-				name := reference.GetReferenceValue(abilityMapping.AbilityName)
-				id := slug.Make(reference.AbilityId(path))
-				util.Check(err)
-				abilityInfo := Info{
-					id,
-					name,
-					reference.GetReferenceValue(abilityMapping.AbilityDescription),
-					slug.Make(reference.AbilitySource(path)),
-					abilityProps,
-				}
-				abilities = append(abilities, abilityInfo)
-				reference.CopyImageFile(abilityMapping.AbilityIcon, id)
-			}
-			//Get skills which have strings directly in the abilities
-			if abilityMapping.AbilityName.TableId == "" && abilityMapping.AbilityName.SourceString != "" {
-				name := abilityMapping.AbilityName.SourceString
-				id := slug.Make(reference.AbilityId(path))
-				abilityInfo := Info{
-					id,
-					name,
-					abilityMapping.AbilityDescription.SourceString,
-					slug.Make(reference.AbilitySource(path)),
-					abilityProps,
-				}
-				fmt.Println(path)
-				fmt.Println(abilityInfo)
-				abilities = append(abilities, abilityInfo)
-				reference.CopyImageFile(abilityMapping.AbilityIcon, id)
-			}
+			abilities = append(abilities, abilityInfo)
+			reference.CopyImageFile(abilityMapping.AbilityIcon, id)
 		}
 		return nil
 	})
@@ -92,4 +73,14 @@ func ParseAbilities(root string) {
 	util.Check(err, abilities)
 	err = f.Close()
 	util.Check(err, f)
+}
+
+func getAbilityProps(abilityMapping Mapping) string {
+	abilityProps := ""
+	if abilityMapping.DescriptionValuesFromCurveTables != nil {
+		bytes, err := json.Marshal(abilityMapping.DescriptionValuesFromCurveTables.GetValues())
+		util.Check(err, abilityMapping)
+		abilityProps = string(bytes)
+	}
+	return abilityProps
 }

@@ -21,6 +21,14 @@ type Mapping struct {
 	CharacterPortrait         reference.ImageReference
 }
 
+func (m Mapping) GetNameProperty() reference.PropertyReference {
+	return m.CharacterKitName
+}
+
+func (m Mapping) GetDescriptionProperty() reference.PropertyReference {
+	return m.CharacterKitDescription
+}
+
 type Info struct {
 	Id          string
 	Name        string
@@ -38,38 +46,19 @@ func ParseCharacters(root string) {
 			var characterMapping Mapping
 			err = json.Unmarshal([]byte(characterRawJson), &characterMapping)
 			util.Check(err, path)
-			if characterMapping.CharacterKitDescription.TableId != "" {
-				name := reference.GetReferenceValue(characterMapping.CharacterKitName)
-				id := slug.Make(reference.CharacterId(path))
-				characterInfo := Info{
-					id,
-					name,
-					reference.GetReferenceValue(characterMapping.CharacterKitDescription),
-					reference.GetReferenceValue(characterMapping.CharacterKitRole),
-				}
-				fmt.Println(path)
-				fmt.Println(characterInfo)
-				characters = append(characters, characterInfo)
-				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
-				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
-				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait")
+			id := slug.Make(reference.CharacterId(path))
+			characterInfo := Info{
+				id,
+				reference.GetName(characterMapping),
+				reference.GetDescription(characterMapping),
+				characterMapping.getRole(),
 			}
-			if characterMapping.CharacterKitDescription.TableId == "" && characterMapping.CharacterKitDescription.SourceString != "" {
-				name := characterMapping.CharacterKitName.SourceString
-				id := slug.Make(reference.CharacterId(path))
-				characterInfo := Info{
-					id,
-					name,
-					characterMapping.CharacterKitDescription.SourceString,
-					characterMapping.CharacterKitRole.SourceString,
-				}
-				fmt.Println(path)
-				fmt.Println(characterInfo)
-				characters = append(characters, characterInfo)
-				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
-				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
-				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait")
-			}
+			fmt.Println(path)
+			fmt.Println(characterInfo)
+			characters = append(characters, characterInfo)
+			reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
+			reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
+			reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait")
 		}
 		return nil
 	})
@@ -82,4 +71,16 @@ func ParseCharacters(root string) {
 	util.Check(err, characters)
 	err = f.Close()
 	util.Check(err, "Unable to close file")
+}
+
+func (m Mapping) getRole() string {
+	if m.CharacterKitRole.TableId != "" {
+		return reference.GetReferenceValue(m.CharacterKitRole)
+	}
+
+	if m.CharacterKitRole.SourceString != "" {
+		return m.CharacterKitRole.SourceString
+	}
+
+	return "UnknownRoleProperty"
 }
