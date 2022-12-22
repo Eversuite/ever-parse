@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
-	"fmt"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
 	"os"
@@ -53,8 +52,6 @@ func ParseCharacters(root string) {
 				reference.GetDescription(characterMapping),
 				characterMapping.getRole(),
 			}
-			fmt.Println(path)
-			fmt.Println(characterInfo)
 			characters = append(characters, characterInfo)
 			reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
 			reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
