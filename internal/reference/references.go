@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"ever-parse/internal/util"
 	"github.com/tidwall/gjson"
+	"io/fs"
 	"os"
 	"regexp"
 	"strings"
@@ -38,6 +39,8 @@ func CopyImageFile(abilityIcon ImageReference, id string) {
 	cleanedPath := regex.ReplaceAllString(correctRoot, ".png")
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, cleanedPath)
+	err = os.MkdirAll("./icons", fs.ModeDir)
+	util.Check(err)
 	err = os.WriteFile("./icons/"+id+".png", content, 0644)
 	util.Check(err, content)
 }
