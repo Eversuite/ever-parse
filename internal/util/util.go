@@ -52,7 +52,6 @@ func CreateDir(paths ...string) (string, error) {
 	}
 	return dir, nil
 }
-
 // FixTags create valid html element tags by replacing the closing tag </> with a valid html closing tag </health>
 // This makes it easier to style the text in the UI
 // Example: <health>Health</> -> <health>Health</health>
@@ -65,4 +64,12 @@ func FixTags(description string) string {
 		descriptionCopy = strings.Replace(descriptionCopy, "</>", endTag, 1)
 	}
 	return descriptionCopy
+}
+
+func Ternary[T any](check bool, a, b T) T {
+	if check {
+		return a
+	} else {
+		return b
+	}
 }
