@@ -6,6 +6,7 @@ import (
 	"ever-parse/internal/util"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
+	"image/png"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -143,6 +144,16 @@ func CopyImageFile(abilityIcon ObjectReference, id string, paths ...string) {
 	paths = append([]string{".", ProjectVImagePath}, paths...)
 	dir, err := util.CreateDir(paths...)
 	util.Check(err)
+
+	stuff, didCrop := imgStuff(cleanedPath)
+	croppedFileName := filepath.Join(dir, id+"-cropped.png")
+
+	croppedFile, err := os.OpenFile(croppedFileName, os.O_CREATE|os.O_RDWR, 0644)
+	util.CheckWithoutPanic(err, "unable to create/write cropped file: "+id+"-cropped.png")
+	if err == nil && didCrop {
+		err = png.Encode(croppedFile, stuff)
+		util.CheckWithoutPanic(err, "Could not safe file")
+	}
 
 	file := filepath.Join(dir, id+".png")
 	err = os.WriteFile(file, content, 0644)
