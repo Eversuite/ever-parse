@@ -60,14 +60,8 @@ func ParseCharacters(root string) {
 		return nil
 	})
 	util.Check(err)
-	f, _ := os.Create("characters.json")
-	enc := json.NewEncoder(f)
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", " ")
-	err = enc.Encode(characters)
-	util.Check(err, characters)
-	err = f.Close()
-	util.Check(err, "Unable to close file")
+	err = util.WriteInfo("characters.json", characters)
+	util.Check(err, "Unable to write characters", characters)
 }
 
 func (m Mapping) getRole() string {
