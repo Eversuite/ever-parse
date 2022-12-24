@@ -41,3 +41,13 @@ func WriteInfo[T any](file string, infos []T) error {
 
 	return f.Close()
 }
+
+func CreateDir(paths ...string) (string, error) {
+	dir := filepath.Join(paths...)
+	err := os.MkdirAll(dir, fs.ModeDir)
+
+	if err != nil {
+		return "", err
+	}
+	return dir, nil
+}
