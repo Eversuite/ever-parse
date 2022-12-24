@@ -8,22 +8,22 @@ import (
 	"os"
 )
 
-func imgStuff(path string) (img image.Image, didCrop bool) {
+func cropImage(path string) (img image.Image, didCrop bool) {
 	imgFile, err := os.OpenFile(path, os.O_RDONLY, 0644)
 	util.CheckWithoutPanic(err, "imagefile", path)
 
 	srcImg, err := png.Decode(imgFile)
 	util.CheckWithoutPanic(err, "srcImg image", path)
 
-	type subber interface {
+	type cropableImage interface {
 		SubImage(r image.Rectangle) image.Image
 	}
 
-	subs, ok := srcImg.(subber)
+	cropable, ok := srcImg.(cropableImage)
+	longestBorder := util.Ternary(srcImg.Bounds().Dx() > srcImg.Bounds().Dy(), srcImg.Bounds().Dx(), srcImg.Bounds().Dy())
 
-	biggest := util.Ternary(srcImg.Bounds().Dx() > srcImg.Bounds().Dy(), srcImg.Bounds().Dx(), srcImg.Bounds().Dy())
-
-	if ok && biggest > 4000 {
+	if ok && longestBorder > 4000 {
+		// I'm pretty sure traverseFirst and traverseSecond can somehow be combined but at this point my brain is melted...
 		firstY := traverseFirst(srcImg, xA)
 		firstX := traverseFirst(srcImg, yA)
 		lastY := traverseLast(srcImg, xA)
@@ -32,7 +32,7 @@ func imgStuff(path string) (img image.Image, didCrop bool) {
 		rect := image.Rect(firstX.X, firstY.Y, lastX.X, lastY.Y)
 
 		fmt.Printf("Cropping [%s] down to [%+v]\n", path, rect)
-		return subs.SubImage(rect), true
+		return cropable.SubImage(rect), true
 	}
 
 	return srcImg, false
@@ -60,7 +60,7 @@ func traverseFirst(img image.Image, axis Axis) image.Point {
 		x := util.Ternary(ax, counter%dy, counter/dy)
 		y := util.Ternary(ax, counter/dy, counter%dy)
 
-		alpha := GetAlphaAt(img, x, y)
+		_, _, _, alpha := img.At(x, y).RGBA()
 		if alpha > 0 {
 			return image.Point{
 				X: x,
@@ -88,7 +88,7 @@ func traverseLast(img image.Image, axis Axis) image.Point {
 		x := util.Ternary(ax, counter%dy, counter/dy)
 		y := util.Ternary(ax, counter/dy, counter%dy)
 
-		alpha := GetAlphaAt(img, x, y)
+		_, _, _, alpha := img.At(x, y).RGBA()
 		if alpha > 0 {
 			return image.Point{
 				X: x,
@@ -103,9 +103,4 @@ func traverseLast(img image.Image, axis Axis) image.Point {
 		X: -1,
 		Y: -1,
 	}
-}
-
-func GetAlphaAt(img image.Image, x int, y int) uint32 {
-	_, _, _, a := img.At(x, y).RGBA()
-	return a
 }
