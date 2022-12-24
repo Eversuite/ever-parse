@@ -53,9 +53,9 @@ func ParseCharacters(root string) {
 				characterMapping.getRole(),
 			}
 			characters = append(characters, characterInfo)
-			reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
-			reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
-			reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait")
+			reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview", "characters", "preview")
+			reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default", "characters", "default-skin")
+			reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait", "characters", "portraits")
 		}
 		return nil
 	})

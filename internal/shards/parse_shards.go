@@ -86,7 +86,7 @@ func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 			reference.GetCurveProperties(abilityMapping),
 		}
 		*shards = append(*shards, shardInfo)
-		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id)
+		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, "shards")
 		return err
 	}
 }
