@@ -103,6 +103,4 @@ go.work
 Game
 OLD_Game
 icons
-abilities.json
-characters.json
-shards.json
+parsedData

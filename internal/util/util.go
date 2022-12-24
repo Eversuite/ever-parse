@@ -3,8 +3,12 @@ package util
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"os"
+	"path/filepath"
 )
+
+const ParsedDataDir = "parsedData"
 
 // Check if the error exists (err != nil). If so the error and relating data is printed and the program panics.
 // Params:
@@ -20,10 +24,13 @@ func Check(err error, data ...any) {
 }
 
 func WriteInfo[T any](file string, infos []T) error {
-	f, err := os.Create(file)
+	dir, err := CreateDir(".", ParsedDataDir)
+
+	f, err := os.Create(filepath.Join(dir, file))
 	if err != nil {
 		return err
 	}
+
 	enc := json.NewEncoder(f)
 	enc.SetEscapeHTML(false)
 	enc.SetIndent("", " ")
@@ -31,5 +38,6 @@ func WriteInfo[T any](file string, infos []T) error {
 	if err != nil {
 		return err
 	}
+
 	return f.Close()
 }

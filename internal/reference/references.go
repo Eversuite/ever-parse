@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"ever-parse/internal/util"
 	"github.com/tidwall/gjson"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -53,7 +52,7 @@ type CurvePropertiesMapping interface {
 
 const noneName string = "None"
 
-const projectVImagePath = "icons"
+const ProjectVImagePath = "icons"
 
 var whitespaceRegex = regexp.MustCompile("\\s")
 var jsonRegex = regexp.MustCompile("\\..*")
@@ -140,14 +139,11 @@ func CopyImageFile(abilityIcon ImageReference, id string, paths ...string) {
 	util.Check(err, cleanedPath)
 
 	// Build the image path.
-	paths = append([]string{".", projectVImagePath}, paths...)
-	// filepath.Join() is OS independent
-	path := filepath.Join(paths...)
-	// And create the directory/directories if they no exist already.
-	err = os.MkdirAll(path, fs.ModeDir)
+	paths = append([]string{".", ProjectVImagePath}, paths...)
+	dir, err := util.CreateDir(paths...)
 	util.Check(err)
 
-	file := filepath.Join(path, id+".png")
+	file := filepath.Join(dir, id+".png")
 	err = os.WriteFile(file, content, 0644)
 	util.Check(err, content)
 }
