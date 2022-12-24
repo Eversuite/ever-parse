@@ -20,7 +20,13 @@ func Check(err error, data ...any) {
 	}
 	fmt.Printf("[Critical] Error{%s} Data [%+v\n]", err, data)
 	panic(err)
+}
 
+func CheckWithoutPanic(err error, data ...any) {
+	if err == nil {
+		return
+	}
+	fmt.Printf("[Warning] Error{%s} Data [%+v]\n", err, data)
 }
 
 func WriteInfo[T any](file string, infos []T) error {
@@ -50,4 +56,12 @@ func CreateDir(paths ...string) (string, error) {
 		return "", err
 	}
 	return dir, nil
+}
+
+func Ternary[T any](check bool, a, b T) T {
+	if check {
+		return a
+	} else {
+		return b
+	}
 }
