@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"ever-parse/internal/util"
 	"github.com/tidwall/gjson"
-	"io/fs"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode"
@@ -51,6 +51,8 @@ type CurvePropertiesMapping interface {
 }
 
 const noneName string = "None"
+
+const ProjectVImagePath = "icons"
 
 var whitespaceRegex = regexp.MustCompile("\\s")
 var jsonRegex = regexp.MustCompile("\\..*")
@@ -127,7 +129,7 @@ func GetReferenceValue(propertyReference PropertyReference) string {
 	return gjson.Get(string(content), "#.StringTable.KeysToMetaData."+propertyReference.Key+"|0").String()
 }
 
-func CopyImageFile(abilityIcon ImageReference, id string) {
+func CopyImageFile(abilityIcon ImageReference, id string, paths ...string) {
 	if abilityIcon.ObjectPath == "" {
 		return
 	}
@@ -135,9 +137,14 @@ func CopyImageFile(abilityIcon ImageReference, id string) {
 	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".png")
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, cleanedPath)
-	err = os.MkdirAll("./icons", fs.ModeDir)
+
+	// Build the image path.
+	paths = append([]string{".", ProjectVImagePath}, paths...)
+	dir, err := util.CreateDir(paths...)
 	util.Check(err)
-	err = os.WriteFile("./icons/"+id+".png", content, 0644)
+
+	file := filepath.Join(dir, id+".png")
+	err = os.WriteFile(file, content, 0644)
 	util.Check(err, content)
 }
 

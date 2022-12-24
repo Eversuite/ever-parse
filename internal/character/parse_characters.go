@@ -53,21 +53,15 @@ func ParseCharacters(root string) {
 				characterMapping.getRole(),
 			}
 			characters = append(characters, characterInfo)
-			reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview")
-			reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default")
-			reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait")
+			reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview", "characters", "preview")
+			reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default", "characters", "default-skin")
+			reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait", "characters", "portraits")
 		}
 		return nil
 	})
 	util.Check(err)
-	f, _ := os.Create("characters.json")
-	enc := json.NewEncoder(f)
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", " ")
-	err = enc.Encode(characters)
-	util.Check(err, characters)
-	err = f.Close()
-	util.Check(err, "Unable to close file")
+	err = util.WriteInfo("characters.json", characters)
+	util.Check(err, "Unable to write characters", characters)
 }
 
 func (m Mapping) getRole() string {

@@ -68,7 +68,7 @@ func ParseAbilities(root string) {
 
 			abilities = append(abilities, abilityInfo)
 
-			reference.CopyImageFile(abilityMapping.AbilityIcon, id)
+			reference.CopyImageFile(abilityMapping.AbilityIcon, id, "abilities")
 		}
 		return nil
 	})
