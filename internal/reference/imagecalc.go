@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"math"
 	"os"
 )
 
@@ -20,7 +21,7 @@ func cropImage(path string) (img image.Image, didCrop bool) {
 	}
 
 	cropable, ok := srcImg.(cropableImage)
-	longestBorder := util.Ternary(srcImg.Bounds().Dx() > srcImg.Bounds().Dy(), srcImg.Bounds().Dx(), srcImg.Bounds().Dy())
+	longestBorder := math.Max(float64(srcImg.Bounds().Dx()), float64(srcImg.Bounds().Dy()))
 
 	if ok && longestBorder > 4000 {
 		// I'm pretty sure traverseFirst and traverseSecond can somehow be combined but at this point my brain is melted...
@@ -28,10 +29,10 @@ func cropImage(path string) (img image.Image, didCrop bool) {
 		firstX := traverseFirst(srcImg, yA)
 		lastY := traverseLast(srcImg, xA)
 		lastX := traverseLast(srcImg, yA)
-
 		rect := image.Rect(firstX.X, firstY.Y, lastX.X, lastY.Y)
 
-		fmt.Printf("Cropping [%s] down to [%+v]\n", path, rect)
+		fmt.Printf("Cropped to [%+v] from [%+v] for [%s]\n", rect, srcImg.Bounds(), path)
+
 		return cropable.SubImage(rect), true
 	}
 
@@ -52,13 +53,13 @@ func traverseFirst(img image.Image, axis Axis) image.Point {
 
 	dy = util.Ternary(dy > dx, dx, dy)
 
-	size := dy * dy
+	size := dx * dy
 	counter := 0
 	ax := bool(axis)
 
 	for counter < size {
-		x := util.Ternary(ax, counter%dy, counter/dy)
-		y := util.Ternary(ax, counter/dy, counter%dy)
+		x := util.Ternary(ax, counter%dy, counter/dx)
+		y := util.Ternary(ax, counter/dy, counter%dx)
 
 		_, _, _, alpha := img.At(x, y).RGBA()
 		if alpha > 0 {
