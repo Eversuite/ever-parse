@@ -51,8 +51,6 @@ func traverseFirst(img image.Image, axis Axis) image.Point {
 	dy := img.Bounds().Dy()
 	dx := img.Bounds().Dx()
 
-	dy = util.Ternary(dy > dx, dx, dy)
-
 	size := dx * dy
 	counter := 0
 	ax := bool(axis)
