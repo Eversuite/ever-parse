@@ -5,6 +5,7 @@ import (
 	"ever-parse/internal/character"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/shards"
+	"ever-parse/internal/talent"
 	"ever-parse/internal/util"
 	"os"
 	"path/filepath"
@@ -15,6 +16,8 @@ func main() {
 	ability.ParseAbilities(".")
 	character.ParseCharacters(".")
 	shards.ParseShards(".")
+	talent.ParseTalents(".")
+
 }
 
 func cleanupPreviousRun() {

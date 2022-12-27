@@ -150,6 +150,15 @@ func CopyImageFile(abilityIcon ImageReference, id string, paths ...string) {
 
 func AbilityId(path string) string {
 	delimiter := "BP_UIAbility_"
+	return generateId(path, delimiter)
+}
+
+func TalentId(path string) string {
+	delimiter := "MPUI_"
+	return generateId(path, delimiter)
+}
+
+func generateId(path string, delimiter string) string {
 	pos := strings.LastIndex(path, delimiter)
 	if pos == -1 {
 		return ""
