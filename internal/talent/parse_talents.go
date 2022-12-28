@@ -21,6 +21,7 @@ type Info struct {
 	Id          string
 	Name        string
 	Description string
+	Source      string
 }
 
 func (m Mapping) GetNameProperty() reference.PropertyReference {
@@ -53,6 +54,7 @@ func ParseTalents(root string) {
 				id,
 				reference.GetName(talentMapping),
 				reference.GetDescription(talentMapping),
+				slug.Make(reference.Source(path)),
 			}
 			talents = append(talents, talentInfo)
 			reference.CopyImageFile(talentMapping.MetaPowerIcon, id, "talent")

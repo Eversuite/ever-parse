@@ -1,0 +1,531 @@
+Id,Name,Description,Source,Properties
+artillery-volley,Artillery Volley,"Fire a volley of 3 artillery shells from Artillery Mage's location to the target location.
+
+Each shell that hits deals <damage-sp>{damage} Magical Damage</>.
+
+Cooldown: <time>{cooldown} seconds</>",artillery-mage,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":3,""Value"":8},{""Time"":4,""Value"":6},{""Time"":5,""Value"":6},{""Time"":6,""Value"":5}],""mana"":[{""Time"":1,""Value"":100},{""Time"":6,""Value"":100}]}"
+escape-shot,Escape Shot,"Fire a short range shot towards a target direction that deals <damage-sp>{damage} Magical Damage</> on-hit and dash in the opposite direction.
+
+Cooldown: <time>{cooldown} seconds</>",artillery-mage,"{""cooldown"":[{""Time"":1,""Value"":12},{""Time"":2,""Value"":12},{""Time"":3,""Value"":11},{""Time"":4,""Value"":11},{""Time"":5,""Value"":10},{""Time"":6,""Value"":10}],""mana"":[{""Time"":1,""Value"":80},{""Time"":6,""Value"":80}],""slow"":[{""Time"":1,""Value"":20},{""Time"":6,""Value"":40}]}"
+killing-field,Killing Field,"Activate to drop a targeting field. <red>Recast</> 3 times to target areas within the field.
+
+After acquiring 3 targets, fire 3 devastating shots which land in the area one after another after a 1 second delay, each dealing <damage-sp>{damage} Magical Damage</> to all enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",artillery-mage,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":4,""Value"":60},{""Time"":6,""Value"":60}],""mana"":[{""Time"":1,""Value"":200},{""Time"":6,""Value"":200}]}"
+artillery-mage-passive,Passive: Strike From Afar,Artillery Mage's abilities deal <damage-sp>+{damage}% bonus damage</> when they are shot past 75% of their maximum range. ,artillery-mage,"{""damage"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":10}]}"
+targeted-strike,Targeted Strike,"<red>Hold</> to charge a devastating artillery shell that deals <damage-sp>{highdamage} Magical Damage</> to enemies in the area.
+
+Charging up the ability expands the area size.
+
+Cooldown: <time>{cooldown} seconds</>",artillery-mage,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":5}],""mana"":[{""Time"":1,""Value"":120},{""Time"":6,""Value"":120}]}"
+face-me,Face Me!,"Leap to a target enemy to issue a challenge to them, knocking back, <speed>Slowing</>, and <yellow>Taunting</> all other enemies in the area.
+
+The challenged enemy takes <penetration>{damageamp}% increased Damage</> from all sources for 5 seconds.
+
+Cooldown: {cooldown} seconds",berserker-tank,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":3,""Value"":60},{""Time"":6,""Value"":60}],""damageamp"":[{""Time"":1,""Value"":50},{""Time"":3,""Value"":100},{""Time"":6,""Value"":100}]}"
+aggressive-parrying,Parry,"Grant yourself {damagereduction}% damage reduction for 1.g seconds. If you take damage during this time, generate 10 Fury and reduce Parry's cooldown by 50%<break>You will reflect 50% of all damage received while parrying<break><break>Cost: 20 Fury<break>Cooldown: {cooldown} seconds",berserker-tank,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":3,""Value"":8},{""Time"":4,""Value"":8},{""Time"":6,""Value"":6}],""damagereduction"":[{""Time"":1,""Value"":100},{""Time"":6,""Value"":100}]}"
+parry,Parry,"Grant yourself <penetration>{damagereduction}% Damage Reduction</> for 1 second.
+
+If you take damage during this time, generate 10 Fury and reduce Parry's cooldown by 50%.
+
+Cost: 20 Fury
+Cooldown: <time>{cooldown} seconds</>",berserker-tank,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":3,""Value"":8},{""Time"":4,""Value"":8},{""Time"":6,""Value"":6}],""damagereduction"":[{""Time"":1,""Value"":100},{""Time"":6,""Value"":100}]}"
+berserker-tank-passive,Passive: Savage Strikes,"Casting an ability grants two stacks of Savage Strike that increase your <attackspeed>Attack Speed</>.
+
+Attacking consumes a stack.",berserker-tank,
+smash,Smash,"Smash the ground in the target direction, dealing <damage-wp>{damage} Physical Damage</> to all enemies in the area of the attack.
+
+Cost: 40 Fury
+Cooldown: <time>{cooldown} second</>",berserker-tank,"{""cooldown"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}]}"
+weapon-throw,Weapon Throw,"Throw an axe a fixed distance. If an enemy is hit, they take <damage-wp>{damage} Physical Damage</> and the axe stops.
+
+When the axe lands it creates a <speed>Slow</> field on the ground and <yellow>Taunts</> nearby enemies.
+
+<red>Recast</> the ability to leap directly to the weapon and pick it up.
+
+Cooldown: <time>{cooldown} seconds</>",berserker-tank,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":3,""Value"":8},{""Time"":4,""Value"":6},{""Time"":5,""Value"":6},{""Time"":6,""Value"":5}]}"
+weapon-throw-pickup,Collect,"Plants a seed in the ground which blooms after 1.5 seconds, healing allies for <healing>{healing}</> and planting a light seed on them.<break><break>The blossom will affect allies but not you.<break><break>Can be caught by allies<break><break>Costs 20 Energy<break>Cooldown {cooldown} sec.",berserker-tank,"{""cooldown"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}]}"
+catch-default,Catch,Increase movement speed by <speed>20%</> for <time>{duration} seconds</>.,catch,"{""buff"":[{""Time"":1,""Value"":1.2},{""Time"":6,""Value"":1.2}],""duration"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":10}]}"
+catch-melee-healer,Catch,Increase all healing by <healing>2.5</> units per stack for <time>12 seconds</>,catch,
+catch-melee-tank,Catch,Increase attack speed by <speed>0.12</> units per stack for <time>12 seconds</>,catch,
+catch-movement-d-p-s,Catch,Increase critical hit chance by 7% per stack for <time>12 seconds</>,catch,
+catch-movement-tank,Catch,Reflect <damage>17.5% of all damage taken</> per stack while in overheat for <time>12 seconds</>,catch,
+catch-ranged-d-p-s,Catch,"Grants Hunter Zenith, which will empower any ability you use in the next 5 seconds.",catch,
+catch-ranged-healer,Catch,Increase <damage>damage</>/<healing>healing</> output by 5% to 10% per stack after executing a Clip Change. Effect lasts for <time>12 seconds</>,catch,
+catch-spell-healer,Catch,"Every basic attack you launch has a 20% chance to activate Clearcast. When Clearcast is active, Imbue Life has no mana cost or cast time.<break><break>Increase your chance of activating Clearcast by 5% for each stack of Catch.",catch,
+catch-spellcaster-d-p-s,Catch,Increase burn duration by <time>0.6 seconds</> per stack and burn damage by <damage>6 units</> per stack for <time>10 seconds</>,catch,
+chilli,Chilli,"This is your offensive ingredient and has the following effects on your recipes:
+
+Honey - Chilli grants {attack-speed}% Attack Speed and a heal based on your Honey level.
+Chilli - Chilli grants an on-hit effect that deals <damage>{impact-damage}</> and applies a burn that deals <damage>{dot-damage}</> per second.
+Chilli - Garlic grants {cooldown-reduction}% Cooldown Reduction as well as granting a Movement Speed buff based on your Garlic level.
+
+Cooldown: <time>{cooldown} seconds</>",chef-support,"{""attack-speed"":[{""Time"":1,""Value"":20},{""Time"":2,""Value"":22},{""Time"":3,""Value"":25},{""Time"":4,""Value"":27},{""Time"":5,""Value"":30},{""Time"":6,""Value"":30}],""cooldown"":[{""Time"":1,""Value"":4},{""Time"":6,""Value"":4}],""cooldown-reduction"":[{""Time"":1,""Value"":20},{""Time"":2,""Value"":22},{""Time"":3,""Value"":25},{""Time"":4,""Value"":27},{""Time"":5,""Value"":30},{""Time"":6,""Value"":30}]}"
+garlic,Garlic,"This is your defensive ingredient and has the following effect on your recipes:
+
+Honey - Garlic grants {resistances} Armor and {resistances} Spell Resistance for {duration} and heals the player every 0.5 seconds based on your Honey level.
+Chilli - Garlic grants {movementspeed}% Movement Speed and cooldown reduction based on your Chilli Level.
+Garlic - Garlic grants {shield} Overshield.
+
+Cooldown: <time>{cooldown} second</>",chef-support,"{""cooldown"":[{""Time"":1,""Value"":4},{""Time"":6,""Value"":4}],""duration"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":3}],""movementspeed"":[{""Time"":1,""Value"":20},{""Time"":2,""Value"":22},{""Time"":3,""Value"":25},{""Time"":4,""Value"":27},{""Time"":5,""Value"":30},{""Time"":6,""Value"":30}],""resistances"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":30}],""shield"":[{""Time"":1,""Value"":200},{""Time"":6,""Value"":1200}]}"
+honey,Honey,"This is your healing ingredient and has the following effects on your recipes:
+
+Honey - Honey heals the player instantly for <healing>{qq-heal}</> health.
+Honey - Chilli heals the player instantly for <healing>{qw-heal}</> as well as providing attack speed based on your Chilli level.
+Honey - Garlic heals the player for <healing>{qe-heal}</> health every 0.5 seconds as well as providing Armor and Spell Resistance based on your Garlic level.
+
+Cooldown: <time>{cooldown} seconds</>",chef-support,"{""cooldown"":[{""Time"":1,""Value"":4},{""Time"":6,""Value"":4}]}"
+family-style,Family Style,"Activate instead of Serve while cooking to present a feast to your team which allows all players to take a piece and doubles the effepower of the granted effect.
+
+Cooldown: {cooldown} seconds",chef-support,"{""cooldown"":[{""Time"":1,""Value"":60},{""Time"":3,""Value"":30},{""Time"":6,""Value"":30}]}"
+serve,Passive: Serve & Hot Pan,"Activate with D to serve your food on a target location. Food can be served after two ingredients have been added to the pot. Every 0.5 seconds, the food increases in strength by 25%. After 1.5 seconds, the food burns, reducing its effectiveness by 50% and is automatically served to the closest ally in range.
+
+After cooking a meal, your next basic attack will deal <damage>{damage} Magical Damage</> as you strike with a hot pan.",chef-support,"{""attack-speed"":[{""Time"":1,""Value"":20},{""Time"":2,""Value"":22},{""Time"":3,""Value"":25},{""Time"":4,""Value"":27},{""Time"":5,""Value"":30},{""Time"":6,""Value"":30}],""cooldown"":[{""Time"":1,""Value"":4},{""Time"":6,""Value"":4}],""cooldown-reduction"":[{""Time"":1,""Value"":20},{""Time"":2,""Value"":22},{""Time"":3,""Value"":25},{""Time"":4,""Value"":27},{""Time"":5,""Value"":30},{""Time"":6,""Value"":30}]}"
+form-change,Passive: Form Change,"Change between Water and Lightning forms, altering the effects of your abilities.
+
+While in Water form your Mana regenerates {mana-regen}% faster.
+
+Cooldown: 2 seconds.",control-mage,"{""mana-regen"":[{""Time"":1,""Value"":50},{""Time"":6,""Value"":50}]}"
+bubble-lightning,UnknownNameProperty,UnknownDescriptionProperty,control-mage,
+ground-rune-lightning,UnknownNameProperty,UnknownDescriptionProperty,control-mage,
+ground-rune-lightning-electrical-storm,UnknownNameProperty,UnknownDescriptionProperty,control-mage,
+storm,Storm,"Send out a cloud that floats towards a target location and slows down as it approaches nears the max distance.
+
+Every 0.5 seconds, the cloud zaps a nearby enemy, dealing <damage-sp>{damage} Magic Damage</> and applying additional effects depending on the type of cloud.
+
+Enemies that make contact with the cloud also take damage and additional effects.
+
+WATER: Shred <spellresist>{spellresistshred} Spell Resistance</> from enemies hit.
+LIGHTNING: Shred <defense>{armorshred} Armor</> from enemies hit.
+
+Cloud Duration: <time>{duration} seconds</>
+Cooldown: <time>{cooldown1}.{cooldown2} seconds</>",control-mage,"{""armorshred"":[{""Time"":1,""Value"":-3},{""Time"":4,""Value"":-9},{""Time"":5,""Value"":-12},{""Time"":6,""Value"":-10}],""cooldown1"":[{""Time"":1,""Value"":9},{""Time"":2,""Value"":7},{""Time"":6,""Value"":3}],""cooldown2"":[{""Time"":1,""Value"":0},{""Time"":6,""Value"":0}],""duration"":[{""Time"":1,""Value"":4},{""Time"":5,""Value"":8},{""Time"":6,""Value"":10}],""slow"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":20}],""spellresistshred"":[{""Time"":1,""Value"":-3},{""Time"":4,""Value"":-9},{""Time"":5,""Value"":-12},{""Time"":6,""Value"":-10}]}"
+storm-lightning,UnknownNameProperty,UnknownDescriptionProperty,control-mage,
+tsunami,Tsunami,"Release a giant wave that washes enemies away with it. At the end of the wave, unleash a blast dealing <damage-sp>{damage} Magic Damage</>.
+
+Cooldown: <time>{cooldown} seconds</>",control-mage,"{""cooldown"":[{""Time"":1,""Value"":160},{""Time"":2,""Value"":120},{""Time"":4,""Value"":80},{""Time"":5,""Value"":80},{""Time"":6,""Value"":70}],""slow"":[{""Time"":1,""Value"":40},{""Time"":6,""Value"":90}],""stun"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":8}],""waterroot2"":[{""Time"":1,""Value"":0},{""Time"":5,""Value"":8},{""Time"":6,""Value"":0}]}"
+bubble,Bubble,"Throw a bubble that flies to the target location before returning.
+
+WATER: For allies hit, grants a shield which blocks {watershield} damage for 2 seconds.
+LIGHTNING: Deal <damage-sp>{lightningdamage} Magic Damage</> to enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",control-mage,"{""cooldown"":[{""Time"":1,""Value"":9},{""Time"":5,""Value"":5},{""Time"":6,""Value"":6}]}"
+ground-rune,Ground Rune,"Place a rune on the ground that detonates after 3 seconds.
+
+WATER: Enemies in the area are slowed and take <damage-sp>{waterdamage} Magic Damage</> on detonation.
+LIGHTNING: Enemies take <damage-sp>{lightningdamage} Magic Damage</> on detonation.
+
+Cooldown: <time>{cooldown} seconds</>",control-mage,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":5}],""lightning-debuff"":[{""Time"":1,""Value"":110},{""Time"":6,""Value"":110}],""waterroot1"":[{""Time"":1,""Value"":2},{""Time"":5,""Value"":2},{""Time"":6,""Value"":3}],""waterroot2"":[{""Time"":1,""Value"":0},{""Time"":5,""Value"":8},{""Time"":6,""Value"":0}]}"
+ground-rune-perfect-conditions,Ground Rune,Place a rune on the ground that detonates after 3 seconds.<break><break>WATER: Enemies in the area are slowed and take <damage>{waterdamage}</> on detonation. Players in the area will be healed for <healing>{waterheal}</> every second<break>LIGHTNING: Enemies in the area take {lightning-debuff}% damage and take <damage>{lightningdamage}</> damage on detonation.<break><break>Cooldown: {cooldown} seconds.,control-mage,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":5}],""lightning-debuff"":[{""Time"":1,""Value"":110},{""Time"":6,""Value"":110}],""waterroot1"":[{""Time"":1,""Value"":2},{""Time"":5,""Value"":2},{""Time"":6,""Value"":3}],""waterroot2"":[{""Time"":1,""Value"":0},{""Time"":5,""Value"":8},{""Time"":6,""Value"":0}]}"
+finale,Final Bow,"Bow to the audience and deal <damage-sp>{damage} Magic Damage</> to enemies caught in the area of effect.
+
+This damage is increased to <damage-sp>{enhanceddamage} Magic Damage</> if you have 5 performance stacks.
+
+Cooldown: <time>{cooldown} seconds</>",dancer-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":3,""Value"":80},{""Time"":6,""Value"":80},{""Time"":7,""Value"":0},{""Time"":15,""Value"":0}]}"
+graceful-dash,Graceful Dash,"Dash towards a target location, dealing <damage-wp>{damage} Physical Damage</> to enemies hit.
+
+For the next 2 seconds, this ability can be <red>Recast</> to dash a second time.
+
+Hitting at least one enemy with both dashes will activate Encore.
+
+Cooldown: <time>{cooldown} seconds</>",dancer-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":2,""Value"":8},{""Time"":3,""Value"":7},{""Time"":4,""Value"":7},{""Time"":5,""Value"":6},{""Time"":6,""Value"":6},{""Time"":7,""Value"":0},{""Time"":15,""Value"":0}]}"
+dancer-d-p-s-passive,Passive: Encore & Captivate,"Encore: Each of Dancer's basic abilities has an Encore condition that, when met, allows her to <red>Recast</> that ability within 4 seconds.
+<red>Recast</> via Encore up to two additional times.
+
+Captivate: For each ability cast, gain a Performance stack.
+
+At 5 Performance stacks, the next ability will captivate any opponents that are hit, <yellow>Stunning</> them for 1 second.",dancer-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}],""damage"":null}"
+take-flight,Flying Jeté,"Suspend yourself in the air, becoming untargetable and allowing you to reposition for up to 2 seconds.
+
+After 2 seconds or on <red>Recast</>, leap down to the ground, dealing <damage-sp>{aoedamage} Magic Damage</> to enemies hit.
+
+Hitting a single target deals <damage-sp>{singledamage} Magic Damage</> instead.
+
+Executing an enemy with Flying Jeté will activate Encore.
+
+Cooldown: <time>{cooldown} seconds</>",dancer-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":2,""Value"":10},{""Time"":3,""Value"":9},{""Time"":4,""Value"":9},{""Time"":5,""Value"":8},{""Time"":6,""Value"":8},{""Time"":7,""Value"":0},{""Time"":15,""Value"":0}]}"
+twirl,Pirouette,"Twirl in a deadly circle, dealing <damage-wp>{damage} Physical Damage</> to enemies hit.
+
+Hitting 3 or more enemies with Twirl will activate Encore.
+
+Cooldown: <time>{cooldown} seconds</>",dancer-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":2,""Value"":6},{""Time"":3,""Value"":5},{""Time"":4,""Value"":5},{""Time"":5,""Value"":4},{""Time"":6,""Value"":4},{""Time"":7,""Value"":0},{""Time"":15,""Value"":0}]}"
+cryo-grenade,Cryo Grenade,"Toss a device across multiple dimensions, freezing all players from opposing team in that area for 4 sec
+
+Proximity to the Evercore prevent the usage of this device
+
+3 Charge",general-meta,"{""extramomentum"":[{""Time"":1,""Value"":5},{""Time"":2,""Value"":8},{""Time"":5,""Value"":20}]}"
+health-potion,Healing Potion,"Drink an invigorating potion, healing you for 40% of your Max Health immediately
+
+5 Charges",general-meta,"{""extramomentum"":[{""Time"":1,""Value"":5},{""Time"":2,""Value"":8},{""Time"":5,""Value"":20}]}"
+lightninig-in-a-bottle,Lightning in a Bottle,"Call down a Lightning Storm that will affect this area for yours and all Opposing teams for 30 sec
+
+Using the bottle in an active Storm area will extend it's duration by 20 sec
+Proximity to the Evercore prevent the usage of this device
+
+1 Charge",general-meta,"{""extramomentum"":[{""Time"":1,""Value"":5},{""Time"":2,""Value"":8},{""Time"":5,""Value"":20}]}"
+consumable-recall-device,Recall Device,"Teleport you back to your Evercore after a 2 second casting time
+
+3 Charges",general-meta,
+speed-potion,Speed Potion,"Drink an energizing potion, granting you 50% extra movement speed for 6 seconds
+
+5 Charges",general-meta,"{""extramomentum"":[{""Time"":1,""Value"":5},{""Time"":2,""Value"":8},{""Time"":5,""Value"":20}]}"
+consumable-stun-grenade,Stun Grenade,"Throw a concussive grenade, stunning all enemies in the are for <time>3 sec</>
+
+3 Charges ",general-meta,
+collect-bounty,Collect Bounty,"Activate to fire <damage-wp>3 shots</> over 1.5 seconds that each deal <damage-wp>{damage} Physical Damage</>. Gun DPS prioritises any marked targets first and then the closest target if no marked targets are in range
+
+Cooldown: <time>{cooldown} seconds</>",gun-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":4,""Value"":60},{""Time"":6,""Value"":60}]}"
+headshot,Headshot,"Fire a shot towards a target location, dealing <damage-wp>{damage} Physical Damage</> to the first enemy hit. This hit will always be a critical hit.
+
+Cooldown: <time>{cooldown} seconds</>",gun-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":2,""Value"":6},{""Time"":3,""Value"":5},{""Time"":4,""Value"":5},{""Time"":5,""Value"":4},{""Time"":6,""Value"":4}]}"
+marking-shot,Marking Shot,"Fire a shot which deals <damage-wp> {damage} Physical Damage</>, applies a {slow}% Slow and applies Headhunt to the target.
+
+Cooldown: <time>{cooldown} seconds</>",gun-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":2,""Value"":8},{""Time"":3,""Value"":7},{""Time"":4,""Value"":7},{""Time"":5,""Value"":6},{""Time"":6,""Value"":6}],""slow"":[{""Time"":1,""Value"":60},{""Time"":5,""Value"":80},{""Time"":6,""Value"":80}]}"
+gun-d-p-s-passive,Headhunt,Mark the highest health nearby enemy. Marked enemies take <damage-wp>20% bonus damage</> from Gun DPS's abilities and auto-attacks.,gun-d-p-s,
+vault,Vault,"Dash onto a target and leap to the other side of them, landing at max auto-attack range. While leaping to the end location, fire two shots into the target, each doing <damage-wp>{damage} Physical Damage</>.
+
+Cooldown: <time>{cooldown} seconds</>",gun-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":2,""Value"":10},{""Time"":3,""Value"":9},{""Time"":4,""Value"":9},{""Time"":5,""Value"":8},{""Time"":6,""Value"":8}]}"
+effigy-of-life,Miracle,"The miraluum in Spirit Healer's lantern creates an area that <health>Heals</> nearby allies for <health>{healing}</> every 2 seconds for 8 seconds.
+
+Cost: <mana>150 Mana</>
+Cooldown: <time>{cooldown} seconds</>",ho-t-healer,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":3,""Value"":80},{""Time"":6,""Value"":80}]}"
+harmonize,Harmonize,"Target an ally to remove crowd control effects from them, or target an enemy to <yellow>Confuse</> it for {duration1}.{duration2} seconds.
+
+Cost: <mana>100 Mana</>
+Cooldown: <time>{cooldown} seconds</>",ho-t-healer,"{""cooldown"":[{""Time"":1,""Value"":12},{""Time"":2,""Value"":12},{""Time"":3,""Value"":11},{""Time"":4,""Value"":11},{""Time"":5,""Value"":10},{""Time"":6,""Value"":10}],""duration1"":[{""Time"":1,""Value"":2},{""Time"":2,""Value"":2},{""Time"":3,""Value"":3},{""Time"":4,""Value"":3},{""Time"":5,""Value"":4},{""Time"":6,""Value"":4}],""duration2"":[{""Time"":1,""Value"":0},{""Time"":2,""Value"":5},{""Time"":3,""Value"":0},{""Time"":4,""Value"":5},{""Time"":5,""Value"":0},{""Time"":6,""Value"":5}]}"
+health-sprout,Health Sprout,"Restore <health>{heal} Health</> to an ally each second for 8 seconds.
+
+When used on an ally that has Imbue Life or Health Sprout, it consumes the ability and <health>Heals</> for 120% of the remaining heal.
+
+Cost: <mana>120 Mana</>
+Cooldown: <time>{cooldown} seconds</>",ho-t-healer,"{""cooldown"":[{""Time"":1,""Value"":160},{""Time"":3,""Value"":200},{""Time"":5,""Value"":280},{""Time"":6,""Value"":340}]}"
+imbue-life,Imbue Life,"Apply an initial <health>Heal</> of <health>{instantheal}</> to a target ally, plus an additional <health>{heal}</> each second for 8 seconds.
+
+Cost: <mana>80 Mana</>
+Cooldown: <time>{cooldown} second</>",ho-t-healer,"{""cooldown"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":3}]}"
+spell-healer-passive,Passive: Clearcast,Auto-attacks have a chance to make the next Imbue Life instant and free to cast.,ho-t-healer,"{""cooldown"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}],""damage"":null}"
+mage-tank-passive,Passive: Shield Mark,"Enemies that are hit by MageTank are <red>MARKED</> for <time>{duration} seconds</>.
+
+Any damage received by marked enemies builds Mage Tank's <shield>Shield</> up to <shield>{overshield-max}% of his max Health</>.",mage-tank,"{""duration"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":3}],""overshield-max"":[{""Time"":1,""Value"":30},{""Time"":3,""Value"":30},{""Time"":4,""Value"":40},{""Time"":6,""Value"":40}],""overshield-per-attack"":[{""Time"":1,""Value"":20},{""Time"":6,""Value"":20}]}"
+mage-tank-warp,Gravity Warp,"Launch a magic orb that damages all enemies it passes through for  <damage-sp>{warp-overlap-damage} Magical Damage</>.
+
+On termination, the shot pulls in nearby enemies and applies <yellow>Stun</>.
+
+<red>Recast</> to terminate the projectile early.
+
+Cost: <mana>{cost} Mana</>
+Cooldown: <time>{cooldown} seconds</>",mage-tank,"{"""":null,""cooldown"":[{""Time"":1,""Value"":12},{""Time"":2,""Value"":10},{""Time"":4,""Value"":8},{""Time"":6,""Value"":8}],""cost"":[{""Time"":1,""Value"":100},{""Time"":6,""Value"":100}]}"
+mage-tank-chaos,Chaotic Nightmare,"Open a vortex of pure chaos at your feet, dealing <damage-sp>{chaos-damage} Magical Damage</> to all surrounding enemies and applying <yellow>Confusion</>.
+
+Confused enemies will attack each other for <time>{duration} seconds</>.
+
+Cost: <mana>{cost} Mana</>
+Cooldown: <time>{cooldown} seconds</>",mage-tank,"{""chaos-damage"":[{""Time"":1,""Value"":155},{""Time"":2,""Value"":215},{""Time"":3,""Value"":340},{""Time"":6,""Value"":340}],""cooldown"":[{""Time"":1,""Value"":80},{""Time"":6,""Value"":80}],""cost"":[{""Time"":1,""Value"":150},{""Time"":6,""Value"":150}],""duration"":[{""Time"":1,""Value"":8},{""Time"":6,""Value"":13}]}"
+mage-tank-have-a-shield,Overshield,"Grant all of your <defense>Shield</> to an ally and gain a <mana>25%</> of the amount back as <mana>Mana</>.
+
+Enemies that break the ally's <defense>Shield</> will have <yellow>Confusion</> applied to them
+
+Cost: <mana>{cost} Mana</>
+Cooldown: <time>{cooldown} seconds</>",mage-tank,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":2,""Value"":6},{""Time"":3,""Value"":5},{""Time"":4,""Value"":5},{""Time"":5,""Value"":4},{""Time"":6,""Value"":4}],""cost"":[{""Time"":1,""Value"":40},{""Time"":6,""Value"":40}]}"
+blossom,Blossom,"Plant a seed in the ground which blooms after 1.5 seconds, <health>Healing</> allies for <damage-wp>{healing}</> and granting them a Seed of Light.
+
+Cooldown: <time>{cooldown} seconds</>",melee-healer,"{""cooldown"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}]}"
+luminous-bulwark,Spirit of Alacrity,"Grant yourself and allies with a Seed of Light <damage-wp>{shield} Shield</>, <yellow>Stun Immunity</> and <attackspeed>{atkspdincrease}% Attack Speed</> for {duration} seconds.
+
+Cooldown: <time>{cooldown} seconds</>",melee-healer,"{""atkspdincrease"":[{""Time"":1,""Value"":15},{""Time"":6,""Value"":40}],""cooldown"":[{""Time"":1,""Value"":60},{""Time"":4,""Value"":45},{""Time"":6,""Value"":45}],""duration"":[{""Time"":1,""Value"":15},{""Time"":6,""Value"":15}]}"
+melee-healer-passive,Passive: Seed of Light,"Using healing abilities on an ally grants them a Seed of Light.
+
+Battle Mender's auto-attacks will <health>Heal</> any ally with a Seed of Light for <health>{heal-ratio}%</> of the damage dealt.",melee-healer,"{""heal-ratio"":[{""Time"":1,""Value"":20},{""Time"":6,""Value"":20}]}"
+serrated-petals,Iluminated Petals,"<health>Heal</> all allies in an area around you for <damage-wp>{healing}</>, granting you and them a Seed of Light.
+
+Cooldown: <time>{cooldown} seconds</>",melee-healer,"{""cooldown"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":3}]}"
+shearing-petal,Shearing Slash,"Dash a short distance dealing <damage-wp>{damage} Physical Damage</> to all enemies in range.
+
+This attack will <health>Heal</> all allies with a Seed of Light by <health>{heal-ratio}%</> of all damage dealt.
+
+Cooldown: <time>6 seconds</>",melee-healer,"{""heal-ratio"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":60}]}"
+charge,Charge,"Charge in the target direction, dealing <damage-sp>{damage} Magic Damage</> and <yellow>Taunting</> all enemies in a radius at the end of the charge.
+
+Colliding with an enemy applies an additional <yellow>Stun</> to the target.
+
+Deals <damage-sp>{fullycharged-bonus}% Magic Damage</> if fully charged.
+
+Cooldown: <time>{cooldown} seconds</>",melee-tank,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":2,""Value"":8},{""Time"":3,""Value"":7},{""Time"":4,""Value"":7},{""Time"":5,""Value"":6},{""Time"":6,""Value"":6}],""fullycharged-bonus"":[{""Time"":1,""Value"":130},{""Time"":6,""Value"":130}]}"
+get-behind-me,Get Behind Me!,"Generate a giant shield in the target direction. While active, it <yellow>Blocks</> enemy projectiles, reduces incoming damage by 30% and slows movement speed by 50%.
+
+Taking damage or blocking projectiles returns <mana>20 Mana</>.
+
+<red>Recast</> or use a different ability to burst the shield, dealing <damage-sp>{damage} Magic Damage</> and <yellow>Taunting</> all enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",melee-tank,"{""cooldown"":[{""Time"":1,""Value"":9},{""Time"":2,""Value"":9},{""Time"":3,""Value"":8},{""Time"":4,""Value"":8},{""Time"":5,""Value"":7},{""Time"":6,""Value"":7}]}"
+guardian-smash,Guardian Smash,"Leap into the air and smash into the ground, sending out a shockwave that taunts all enemies in a wide area.
+
+For 10 seconds, gain <shield>{overshield-self} shield</> for each enemy hit by the shockwave.
+
+Nearby allies gain <shield>{overshield-allies} shield</>.
+
+Cooldown: <time>{cooldown} seconds</>",melee-tank,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":3,""Value"":80},{""Time"":6,""Value"":80}],""overshield-allies"":[{""Time"":1,""Value"":250},{""Time"":2,""Value"":550},{""Time"":6,""Value"":1350}],""overshield-self"":[{""Time"":1,""Value"":400},{""Time"":6,""Value"":400}]}"
+mana-barrier,Passive: Mana Barrier,"Gain <mana>1 Mana</> for each enemy <yellow>Taunted</> (up to a maximum of 500).
+
+For every <mana>20 Mana</> obtained, gain <defense>1 Armour</> and <spellresist>1 Spell Resistance</>.",melee-tank,
+protection-dome,Protection Dome,"Magical dome that protects all allies inside it, decreasing all damage received by <defense>{defense}%</>. Also slows the movement and attack speeds of all enemies who dare to enter.<break>Enemy projectiles are destroyed by the dome.<break><break>Will last for <time>{duration} sec</>. <break><break>Costs 5 Energy<break>Cooldown 90 sec.",melee-tank,"{""defense"":[{""Time"":1,""Value"":0},{""Time"":4,""Value"":0}],""duration"":[{""Time"":1,""Value"":6},{""Time"":4,""Value"":12}]}"
+shield-toss,Shield Toss,"Throw shield forward and back like a boomerang.
+
+Hitting an enemy <yellow>Stuns</> and deals <damage-wp>{damage} Physical Damage</> to them and all nearby enemies.
+
+Cooldown: <time>{cooldown} seconds</>",melee-tank,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":2,""Value"":10},{""Time"":3,""Value"":9},{""Time"":4,""Value"":9},{""Time"":5,""Value"":8},{""Time"":6,""Value"":8}]}"
+skewer,Stabby Stab,"Stab sword in a target direction, dealing <damage-wp>{damage} Physical Damage</> to enemies hit.
+
+The first enemy hit takes double damage.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""cooldown"":[{""Time"":1,""Value"":14},{""Time"":6,""Value"":9}]}"
+summon-ancestor-fighter,Final Lesson - Fighter Stance,"Summon the spirit of Mini Tank's former master who charges forward with his sword, dealing <damage-wp>{damage} Physical Damage</> and applying a <defense>{armourdebuff}% Armour</> debuff for 5 seconds to all enemies hit.
+
+This ability shares a cooldown with the Tank Stance version.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""armourdebuff"":[{""Time"":1,""Value"":30},{""Time"":3,""Value"":50},{""Time"":6,""Value"":50}],""cooldown"":[{""Time"":1,""Value"":120},{""Time"":3,""Value"":80},{""Time"":6,""Value"":80}]}"
+upward-slash,Punching Up,"Swing sword upward, dealing <damage-wp>{damage} Physical Damage</> to enemies hit and knocking them into the air and towards a target location.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""cooldown"":[{""Time"":1,""Value"":18},{""Time"":6,""Value"":13}]}"
+whirlwind,Whirlwind,"Swing sword in a circle 6 times over 3 seconds, dealing <damage-wp>{damage} Physical Damage</> to enemies hit with each swing.
+
+If an enemy is hit 3 times by Whirlwind, they will have their <defense>Armour</> reduced by <defense>{armourdebuff}%</> for 3 seconds.
+
+<red>Recast</> to cancel ability.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""armourdebuff"":[{""Time"":1,""Value"":25},{""Time"":6,""Value"":25}],""cooldown"":[{""Time"":1,""Value"":11},{""Time"":6,""Value"":6}]}"
+stance-swap,Passive: Stance Swap,"Change between Fighter and Tank stances, altering the effects of your abilities.
+
+While in Fighter Stance, <damage-wp>Damage</> is increased by <damage-wp>10%</> while in Tank Stance, gain <defense>10% Damage Mitigation</>.
+
+Cooldown: <time>2 seconds</>",mini-tank,
+bash,Shield Wave,"Smash shield into the ground, sending a shockwave in a target direction that deals <damage-wp>{damage} Physical Damage</> and applies a <speed>{slow}% Slow</> for 3 seconds to enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""cooldown"":[{""Time"":1,""Value"":14},{""Time"":6,""Value"":9}],""slow"":[{""Time"":1,""Value"":25},{""Time"":6,""Value"":50}]}"
+meteor-smash,Meteor Smash,"Leap to a target location, dealing <damage-sp>{damage} Magical Damage</> and <yellow>Stunning</> enemies in the area for 0.5 seconds.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""cooldown"":[{""Time"":1,""Value"":18},{""Time"":6,""Value"":13}]}"
+shield-spin,Over Here!,"Swing shield around in a circle once, dealing <damage-sp>{damage} Magical Damage</> and <yellow>Taunting</> all enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""cooldown"":[{""Time"":1,""Value"":11},{""Time"":6,""Value"":6}]}"
+summon-ancestor-tank,Final Lesson - Tank Stance,"Summon the spirit of Mini Tank's former master who charges forward with his shield, dealing <damage-sp>{damage} Magic Damage</> and applying a <speed>{slow}% Movement Speed</> and <attackspeed>Attack Speed</> slow to all enemies hit.
+
+This ability shares a cooldown with the Fighter Stance version.
+
+Cooldown: <time>{cooldown} seconds</>",mini-tank,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":3,""Value"":80},{""Time"":6,""Value"":80}],""slow"":[{""Time"":1,""Value"":40},{""Time"":3,""Value"":80},{""Time"":6,""Value"":80}]}"
+movement-d-p-s-backlash,Backlash,"Consumes all Momentum instantly, attacking a single target for <damage-wp>{normaldamage} Physical Damage</> per point of Momentum consumed.
+
+Generates {cost} Momentum
+Cooldown: <time>{cooldown} seconds</>",movement-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":3,""Value"":6},{""Time"":4,""Value"":4},{""Time"":5,""Value"":4},{""Time"":6,""Value"":3}],""cost"":[{""Time"":1,""Value"":25},{""Time"":6,""Value"":25}]}"
+movement-d-p-s-phase-clone,Phase Clone,"Create a clone that <yellow>Taunts</> enemies. It will then explode dealing <damage-wp>{damage} Physical Damage</> to all enemies in range.
+
+Generates 35 Momentum
+Cooldown: <time>{cooldown} seconds</>",movement-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":110},{""Time"":3,""Value"":90},{""Time"":6,""Value"":90}]}"
+movement-d-p-s-slash,Slash,"Lunge forward a short distance dealing <damage-wp>{damage} Physical Damage</> to all enemies caught in the Slash.
+
+Generates 35 Momentum
+Cooldown: <time>{cooldown} seconds</>",movement-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":2,""Value"":8},{""Time"":3,""Value"":7},{""Time"":4,""Value"":7},{""Time"":6,""Value"":5}]}"
+movement-d-p-s-passive,Passive: Critical Strikes,"All of Shadow Blade's attacks have a +<crit>10%</> chance to deal <crit>Critical Damage</>.
+
+Shadow Blade deals <damage-wp>{crit}% Physical Damage</> when attacking from behind.",movement-d-p-s,"{""crit"":[{""Time"":1,""Value"":110},{""Time"":6,""Value"":110}]}"
+teleport-d-p-s,Teleport,"Blink to the targeted location.
+
+Generates 15 Momentum
+Cooldown: <time>{cooldown} seconds</>",movement-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":2,""Value"":6},{""Time"":3,""Value"":5},{""Time"":4,""Value"":5},{""Time"":5,""Value"":4},{""Time"":6,""Value"":4}]}"
+hyper-dash,Hyperdash,"Dash forward pulling enemies towards Blink Boxer.
+
+At the end of the dash, gain a <shield>Shield</> equal to <health>25% Max Health</> for 5 seconds.
+
+Generates 40 Momentum
+Cooldown: Cooldown: <time>{cooldown} seconds</>",movement-tank,"{""cooldown"":[{""Time"":1,""Value"":9},{""Time"":3,""Value"":9},{""Time"":4,""Value"":7},{""Time"":5,""Value"":7},{""Time"":6,""Value"":5}],""defense"":[{""Time"":1,""Value"":5},{""Time"":4,""Value"":35}]}"
+movement-tank-passive,Passive: Momentum Barrier,Gain an increase to <attackspeed>Attack Speed</> based on how high Blink Boxer's Momentum is.,movement-tank,
+pummel,Pummel,"<red>Hold</> this ability to throw a sustained flurry of punches at all enemies in range, dealing <damage-wp>{damage} Physical Damage</> every 0.5 seconds (modified by your <attackspeed>Attack Speed</>).
+
+Every punch deals 5% more damage.
+
+Cost: {cost} Momentum per second
+Cooldown: <time>{cooldown} seconds</>",movement-tank,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":6,""Value"":3}],""cost"":[{""Time"":1,""Value"":5},{""Time"":2,""Value"":10},{""Time"":6,""Value"":10}]}"
+sonic-boom,Sonic Boom,"Launch a massive magical fist that causes <damage-sp>{damage} Magical Damage</> and a <time>{duration} second</> <yellow>Stun</> to all enemies caught in its path.
+
+Generates 25 Momentum
+Cooldown: <time>{cooldown} seconds</>",movement-tank,"{""cooldown"":[{""Time"":1,""Value"":100},{""Time"":4,""Value"":70}],""duration"":[{""Time"":1,""Value"":5},{""Time"":4,""Value"":8}]}"
+uppercut,Uppercut,"A devastating punch that deals <damage-wp>{damage} Physical Damage</> and <yellow>Stuns</> enemies for <time>{duration} second(s)</>.
+
+Generates 25 Momentum
+Cooldown: <time>{cooldown} seconds</>",movement-tank,"{""chance"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":40}],""cooldown"":[{""Time"":1,""Value"":9},{""Time"":6,""Value"":4}],""duration"":[{""Time"":1,""Value"":2},{""Time"":6,""Value"":2}]}"
+dawn-to-dusk,Dawn to Dusk,"Enter a state of concentration that increases vision range. Left-click up to 3 times to fire enchanted arrows, each with a different effect.
+
+The first will deal <damage-sp>{lowdamage} Magical Damage</> and reduce enemy's <defense>Armor</> by <defense>30%</> for 6 seconds.
+
+The second will deal <damage-sp>{lowdamage} Magical Damage</> while <yellow>Rooting</> all enemies hit.
+
+The last shot will finish with a massive explosion, dealing <damage-wp>{highdamage} Physical Damage</> to all enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":2,""Value"":90},{""Time"":4,""Value"":60},{""Time"":5,""Value"":37.5},{""Time"":6,""Value"":18}]}"
+ranged-d-p-s-passive,Passive: Hunter's Zenith,"Basic attacking 5 times will grant the Hunter's Zenith buff, which will improve the next ability used.
+
+Solar Shot: Increases damage by 50%
+Tracer Arrows: Increases duration by 2 seconds
+Skypiercer: Blinds enemies",ranged-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}],""damage"":null}"
+skypiercing,Skypiercer,"Call down a solar flare that lasts for <time>5 seconds</> and damages all enemies inside it for <damage-sp>{damage} Magical Damage</> every second.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":3,""Value"":8},{""Time"":4,""Value"":6},{""Time"":5,""Value"":6},{""Time"":6,""Value"":5}]}"
+solar-shot,Solar Shot,"Charge your bow to shoot a piercing arrow in the target direction, dealing <damage-wp>{normaldamage} Physical Damage</> to all enemies in it's path and generating 2 Focus per enemy hit.
+
+Enemies hit at the end of the shot take <damage-wp>{aimeddamage} Physical Damage</> and the user generates 5 Focus per enemy hit.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":7},{""Time"":2,""Value"":7},{""Time"":3,""Value"":6},{""Time"":4,""Value"":6},{""Time"":5,""Value"":5},{""Time"":6,""Value"":5}]}"
+solar-shot-densified-sunbean,Solar Shot,"Charge your bow to shoot a piercing arrow in the target direction, dealing <damage>{normaldamage} damage</> to the first enemie it hits and generating 2 Focus.<break><break>If the Enemy is hit at the correct charged distance are hit for <damage>{aimeddamage} damage</> and the user generates 5 Focus. Additionally, this damage is <damage>50%</> higher if used during Hunter's Zenith. <break><break>This shot is always a guaranteed Critical Hit<break><break>Cooldown {cooldown} sec",ranged-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":7},{""Time"":2,""Value"":7},{""Time"":3,""Value"":6},{""Time"":4,""Value"":6},{""Time"":5,""Value"":5},{""Time"":6,""Value"":5}]}"
+tracer-arrows,Tracer Arrows,"Empower your basic attacks for the next <time>{duration} seconds</>, causing them to deal <damage-wp>{damage} Physical Damage</> while also reducing target <defense>Armor</> by <defense>{debuff}%</>.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":3,""Value"":10},{""Time"":4,""Value"":8},{""Time"":5,""Value"":8},{""Time"":6,""Value"":6}],""debuff"":[{""Time"":1,""Value"":5},{""Time"":3,""Value"":7},{""Time"":5,""Value"":11},{""Time"":6,""Value"":14}],""duration"":[{""Time"":1,""Value"":2},{""Time"":6,""Value"":4.5}]}"
+clip-change,Passive: Ammo Swap,"<red>Switch</> between <health>Healing</> and <damage-sp>Damage</> mode.
+
+Damage mode abilities scale with Weapon Power while Healing mode abilities scale with Spell Power.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-healer,"{""cooldown"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}]}"
+gatling-gun-damage,Gatling Gun,"Fire a barrage of 50 bullets towards a target location over 5 seconds while slowly walking backwards.
+
+Each healing shot will heal allies for <healing>{heal} Health</>.
+Each damage shot will deal <damage-wp>{damage} damage</> to enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>.",ranged-healer,"{""cooldown"":[{""Time"":1,""Value"":90},{""Time"":3,""Value"":60},{""Time"":6,""Value"":60}]}"
+gatling-gun-healing,Gatling Gun,"Fire a barrage of 50 bullets towards a target location over 5 seconds while slowly walking backwards.
+
+Each healing shot will heal allies for <healing>{heal} Health</>.
+Each damage shot will deal <damage-wp>{damage} damage</> to enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>.",ranged-healer,"{""cooldown"":[{""Time"":1,""Value"":90},{""Time"":3,""Value"":60},{""Time"":6,""Value"":60}]}"
+ray-shot-damage,UnknownNameProperty,UnknownDescriptionProperty,ranged-healer,
+ray-shot-healing,Ray Shot,"Fire a beam that either heals allies or hurts enemies, depending on its active mode.
+
+Healing beam heals for <health>{healing} Health</>.
+Damage beam deals <damage-sp>{damage} Magical Damage</>.
+
+Firing Ray Shot grants a small <health>Heal</> to Phoenix Ranger.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-healer,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":2,""Value"":6},{""Time"":3,""Value"":5},{""Time"":4,""Value"":5},{""Time"":5,""Value"":4},{""Time"":6,""Value"":4}]}"
+shotgun-damage,Double Barrel,"Fire two shotgun blasts in a cone towards a target location.
+
+The healing shot will heal allies hit for <healing>{heal} Health</>.
+The damage shot will deal <damage-wp>{damage} damage</> to enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-healer,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":2,""Value"":8},{""Time"":3,""Value"":7},{""Time"":4,""Value"":7},{""Time"":5,""Value"":6},{""Time"":6,""Value"":6}]}"
+shotgun-healing,Double Barrel,"Fire two shotgun blasts in a cone towards a target location.
+
+The healing shot will heal allies hit for <healing>{heal} Health</>.
+The damage shot will deal <damage-wp>{damage} damage</> to enemies hit.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-healer,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":2,""Value"":8},{""Time"":3,""Value"":7},{""Time"":4,""Value"":7},{""Time"":5,""Value"":6},{""Time"":6,""Value"":6}]}"
+slide,Slide,"Quickly slide in the target direction, ignoring collision with enemies.
+
+Cooldown: <time>{cooldown} seconds</>",ranged-healer,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":5}]}"
+spearfighter-e,Mark for Death,"Target enemy is marked and takes <penetration>{mitigation-debuff}% Damage</> for <time>{duration} seconds</>.
+
+If a marked target dies, ability cooldowns are reduced:
+Mark for Death: <red>Reset</>
+Kyru Unleashed!: <time>-{r-cd-reduction} seconds</>
+
+Cost: <mana>{cost} Mana</>
+Cooldown: <time>{cooldown} seconds</>",spear-fighter,"{""cooldown"":[{""Time"":1,""Value"":20},{""Time"":6,""Value"":10}],""cost"":[{""Time"":1,""Value"":60},{""Time"":6,""Value"":60}],""duration"":[{""Time"":1,""Value"":2},{""Time"":6,""Value"":3.25}],""mitigation-debuff"":[{""Time"":1,""Value"":150},{""Time"":6,""Value"":150}],""r-cd-reduction"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}]}"
+spearfighter-passive,Passive: Spirit of Kyru,"Every third auto-attack hits enemies in an arc. Completing this 3-attack sequence increases attack range and refunds <mana>{mana-refund} Mana</> for every target hit.
+
+The sequence <red>Resets</> and the effect disappears after <time>{duration} seconds</> without an auto-attack.",spear-fighter,"{""cooldown"":[{""Time"":1,""Value"":2},{""Time"":6,""Value"":2}],""duration"":[{""Time"":1,""Value"":2},{""Time"":6,""Value"":2}],""mana-refund"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}]}"
+spearfighter-q,Multi Spear,"Attack your previous target (otherwise the nearest target) dealing <damage-wp>{damage} Physical Damage</>.
+
+This ability has {q-stacks} charges, which are regained after the cooldown.
+
+Resets auto-attack sequence.
+
+Cost: <mana>{cost} stack</>
+Cooldown: <time>{cooldown} seconds</>",spear-fighter,"{""cooldown"":[{""Time"":1,""Value"":8},{""Time"":6,""Value"":8}],""cost"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}],""q-hits"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":3}],""q-stacks"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":3}]}"
+spearfighter-r,Kyru Unleashed!,"Turn into the legendary dragon Kyru and launch in a direction, dealing <damage-wp>{projectile-damage} Physical Damage</> to all enemies passed through.
+
+Recast to end dragon form in an explosion that deals <damage-wp>{explosion-damage} Physical Damage</> to nearby enemies and activates Spirit of Kyru.
+
+Cost: <mana>{cost} Mana</>
+Cooldown: <time>{cooldown} seconds</>",spear-fighter,"{""cooldown"":[{""Time"":1,""Value"":60},{""Time"":6,""Value"":60}],""cost"":[{""Time"":1,""Value"":100},{""Time"":6,""Value"":100}]}"
+spearfighter-w,Range Maker,"Jump forward or back to the maximum melee range to the target, dealing <damage-wp>{damage} Physical Damage</>.
+
+<red>Resets</> auto-attack sequence.
+
+Cost: <mana>{cost} Mana</>
+Cooldown: <time>{cooldown} seconds</>",spear-fighter,"{""cooldown"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}],""cost"":[{""Time"":1,""Value"":40},{""Time"":6,""Value"":40}]}"
+ashen-incantation,Ashen Incantation,"Send out a cone of fire, dealing <damage-sp>{directdmg} Magical Damage</> to all enemies hit.
+
+Cost: <mana>50 Mana</>
+Cooldown: <time>{cooldown} seconds</>",spellcasting-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":3,""Value"":6},{""Time"":4,""Value"":4},{""Time"":5,""Value"":4},{""Time"":6,""Value"":3}],""weaken"":[{""Time"":1,""Value"":20},{""Time"":3,""Value"":30},{""Time"":5,""Value"":50},{""Time"":6,""Value"":70}]}"
+flame-shield,Burning Heart,"Create a fiery aura around Pyromancer for the next 8 seconds that ignites all nearby enemies in the area.
+
+While the aura is active, Pyromancer gains an additional <defense>25 Armour</>, <mana>100% Mana Regen</> and <damage-sp>{damageamp}% Spell Power</>.
+
+Cost: <mana>50 Mana</>
+Cooldown: <time>{cooldown} seconds</>",spellcasting-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":120},{""Time"":4,""Value"":75},{""Time"":6,""Value"":75}],""damageamp"":[{""Time"":1,""Value"":20},{""Time"":3,""Value"":60},{""Time"":6,""Value"":60}]}"
+spell-d-p-s-passive,Passive: Burning Touch,"Hitting enemies with your abilities causes them to burn, dealing damage over time and granting Pyromancer <damage-sp>100 Spell Power</> for each burning target. Basic attacks against burning targets refund <mana>10 Mana</>.",spellcasting-d-p-s,
+spellbomb-d-p-s,Spellbomb,"Set off a delayed explosion that damages enemies for <damage-sp>{damage} Magical Damage</>.
+
+If enemies walk over the bomb as it powers up, they will catch fire.
+
+Cost: <mana>80 Mana</>
+Cooldown: <time>{cooldown} seconds</>",spellcasting-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":14},{""Time"":3,""Value"":14},{""Time"":4,""Value"":10},{""Time"":5,""Value"":10},{""Time"":6,""Value"":8}]}"
+vireball,Fireball,"Launch a fire ball in the selected direction, which will damage the first enemy it hits for <damage-sp>{damage} Magical Damage</>.
+
+Cost: <mana>50 Mana</>
+Cooldown: <time>{cooldown} seconds</>",spellcasting-d-p-s,"{""cooldown"":[{""Time"":1,""Value"":10},{""Time"":3,""Value"":10},{""Time"":4,""Value"":8},{""Time"":5,""Value"":8},{""Time"":6,""Value"":6}]}"
+tech-medic-e,Shield Shot,"Fire an energy shot at an ally granting them <shield>{overshield} Shield</>.
+
+Recast the ability to teleport to the target. Doing so lowers the cooldown of Pick-Me-Up by <time>{q-cdr} seconds</>.
+
+When <red>AMPED</> (50+ Momentum)
+Allies are granted a <shield>Shield</> equal to <shield>{overshield-amped}%</> of their maximum health and <red>Recasting</> the ability lowers the cooldown of Pick-Me-Up by <time>{q-cdr-amped} seconds</> instead.
+
+Removes: {momentum} Momentum
+Cooldown: <time>{cooldown} seconds</>",tech-medic,"{""cooldown"":[{""Time"":1,""Value"":6},{""Time"":6,""Value"":6}],""momentum"":[{""Time"":1,""Value"":-15},{""Time"":6,""Value"":-15}],""overshield-amped"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":20}],""q-cdr"":[{""Time"":1,""Value"":2},{""Time"":6,""Value"":2}],""q-cdr-amped"":[{""Time"":1,""Value"":3},{""Time"":6,""Value"":3}]}"
+tech-medic-q-infused-stimulants,Infused Med-Pack,"Drop a med-pack on the ground that heals allies for <health>{heal-instant} Health</> on pick up.
+
+When <red>AMPED</> (50+ Momentum)
+Med-packs explode on pickup, healing nearby allies for <health>{heal-hot} Health</> every {tick-interval} second and damaging enemies for <damage-sp>{explosion-damage} Magical Damage</>.
+
+Enemies are also poisoned for <damage-sp>{poison-dot} Magical Damage</> every {tick-interval} second.
+
+The AMPED Pack can be in 2 different colors, granting a 4 sec bonus to the player that picks it up:
+Red: <damage-wp>Physical Power</>
+Purple: <damage-sp>Magic Power</>
+
+Generates: {momentum} Momentum
+Effect Duration: <time>{duration} seconds</>
+Cooldown: <time>{cooldown} seconds</>",tech-medic,"{""cooldown"":[{""Time"":1,""Value"":7},{""Time"":2,""Value"":7},{""Time"":3,""Value"":6},{""Time"":4,""Value"":6},{""Time"":5,""Value"":5},{""Time"":6,""Value"":5}],""duration"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}],""lifetime"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":10}],""momentum"":[{""Time"":1,""Value"":20},{""Time"":6,""Value"":20}],""tick-interval"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}]}"
+tech-medic-passive,Passive: Defibrillator,"Interacting with a Dead team mate will cause Tech Medic to revive the player after a short delay.
+
+When Tech-Medic has 50+ Momentum he becomes <red>AMPED</>, modifying the effects his abilities.
+
+When Tech-Medic has 90+ Momentum he becomes <yellow>SILENCED</>, preventing casting abilities with a cost.
+
+Cooldown: <time>{cooldown} seconds</>",tech-medic,"{""cooldown"":[{""Time"":1,""Value"":90},{""Time"":6,""Value"":90}]}"
+tech-medic-q,Med-Pack,"Drop a med-pack on the ground that heals allies for <health>{heal-instant} Health</> on pick up.
+
+When <red>AMPED</> (50+ Momentum)
+Med-packs explode on pickup, healing nearby allies for <health>{heal-hot} Health</> every {tick-interval} second and damaging enemies for <damage-sp>{explosion-damage} Magical Damage</>.
+
+Enemies are also poisoned for <damage-sp>{poison-dot} Magical Damage</> every {tick-interval} second.
+
+Generates: {momentum} Momentum
+Effect Duration: <time>{duration} seconds</>
+Cooldown: <time>{cooldown} seconds</>",tech-medic,"{""cooldown"":[{""Time"":1,""Value"":7},{""Time"":2,""Value"":7},{""Time"":3,""Value"":6},{""Time"":4,""Value"":6},{""Time"":5,""Value"":5},{""Time"":6,""Value"":5}],""duration"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}],""lifetime"":[{""Time"":1,""Value"":10},{""Time"":6,""Value"":10}],""momentum"":[{""Time"":1,""Value"":20},{""Time"":6,""Value"":20}],""tick-interval"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}]}"
+tech-medic-r,Emergency Shelter,"Instantly generate a protective dome around Tech-Medic, dealing <damage-sp>{damage} Magical Damage</> and knocking back nearby enemies.
+
+The dome <yellow>Blocks</> enemies and projectiles until Tech-Medic runs out of Momentum.
+
+Cost: {cost} Momentum
+Minimum Duration: {minimum-duration} seconds
+Cooldown: <time>{cooldown} seconds</>
+
+<hint-text>The dome cannot last longer than {maxduration} seconds.</>",tech-medic,"{""cooldown"":[{""Time"":1,""Value"":60},{""Time"":6,""Value"":60}],""cost"":[{""Time"":1,""Value"":20},{""Time"":6,""Value"":20}],""maxduration"":[{""Time"":1,""Value"":15},{""Time"":6,""Value"":15}],""minimum-duration"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}]}"
+tech-medic-w,Gas Grenade,"Launch a grenade that releases gas on impact, applying <yellow>Daze</> and poison to enemies, dealing <damage-sp>{tick-damage} Magical Damage</> every {tick-interval} second and reducing their <health>Healing Received by {heal-debuff}%</>.
+
+When <red>AMPED</> (50+  Momentum)
+Poisoned enemies instead take <damage-sp>{tick-damage-amped} Magical Damage</> every {tick-interval} second.
+
+Generates: {momentum} Momentum
+Effect Duration: <time>{duration} seconds</>
+Cooldown: <time>{cooldown} seconds</>",tech-medic,"{""cooldown"":[{""Time"":1,""Value"":7},{""Time"":6,""Value"":7}],""duration"":[{""Time"":1,""Value"":5},{""Time"":6,""Value"":5}],""heal-debuff"":[{""Time"":1,""Value"":25},{""Time"":6,""Value"":25}],""momentum"":[{""Time"":1,""Value"":35},{""Time"":6,""Value"":35}],""tick-interval"":[{""Time"":1,""Value"":1},{""Time"":6,""Value"":1}]}"

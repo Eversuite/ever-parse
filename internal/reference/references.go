@@ -177,7 +177,7 @@ func CharacterId(path string) string {
 	return addSpace(folders[4])
 }
 
-func AbilitySource(path string) string {
+func Source(path string) string {
 	folders := strings.Split(path, string(os.PathSeparator))
 	return addSpace(folders[3])
 }
