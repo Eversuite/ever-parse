@@ -169,20 +169,43 @@ func generateId(path string, delimiter string) string {
 	}
 	rawAbilityName := path[adjustedPos:]
 	removedFileEnding := strings.ReplaceAll(rawAbilityName, ".json", "")
-	return addSpace(strings.ReplaceAll(removedFileEnding, "_", "-"))
+	return AddSpace(strings.ReplaceAll(removedFileEnding, "_", "-"))
+}
+
+func TalentCategoryFromPath(path string) (result string) {
+	reversedString := reverse(path)
+	s := strings.Index(reversedString, ".")
+	if s == -1 {
+		return reverse(result)
+	}
+	newS := reversedString[s+len("."):]
+	e := strings.Index(newS, "_")
+	if e == -1 {
+		return reverse(result)
+	}
+	result = newS[:e]
+	return reverse(result)
+}
+
+func reverse(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
 }
 
 func CharacterId(path string) string {
 	folders := strings.Split(path, string(os.PathSeparator))
-	return addSpace(folders[4])
+	return AddSpace(folders[4])
 }
 
 func Source(path string) string {
 	folders := strings.Split(path, string(os.PathSeparator))
-	return addSpace(folders[3])
+	return AddSpace(folders[3])
 }
 
-func addSpace(s string) string {
+func AddSpace(s string) string {
 	buf := &bytes.Buffer{}
 	for i, character := range s {
 		if unicode.IsUpper(character) && i > 0 {
