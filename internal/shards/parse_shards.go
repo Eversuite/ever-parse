@@ -13,7 +13,7 @@ import (
 )
 
 type Mapping struct {
-	ShardIcon            reference.ImageReference      `json:"AbilityIcon"`
+	ShardIcon            reference.ObjectReference     `json:"AbilityIcon"`
 	ShardName            reference.PropertyReference   `json:"AbilityName"`
 	ShardDescription     reference.PropertyReference   `json:"AbilityDescription"`
 	ShardPreviewText     reference.PropertyReference   `json:"NextLevelPreviewText"`

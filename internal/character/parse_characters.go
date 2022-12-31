@@ -15,9 +15,9 @@ type Mapping struct {
 	CharacterKitName          reference.PropertyReference
 	CharacterKitDescription   reference.PropertyReference
 	CharacterKitRole          reference.PropertyReference
-	CharacterDefaultSkinImage reference.ImageReference
-	CharacterPreviewImage     reference.ImageReference
-	CharacterPortrait         reference.ImageReference
+	CharacterDefaultSkinImage reference.ObjectReference
+	CharacterPreviewImage     reference.ObjectReference
+	CharacterPortrait         reference.ObjectReference
 }
 
 func (m Mapping) GetNameProperty() reference.PropertyReference {

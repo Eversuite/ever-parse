@@ -12,7 +12,7 @@ import (
 )
 
 type Mapping struct {
-	AbilityIcon                      reference.ImageReference
+	AbilityIcon                      reference.ObjectReference
 	AbilityName                      reference.PropertyReference
 	AbilityDescription               reference.PropertyReference
 	NextLevelPreviewText             reference.PropertyReference

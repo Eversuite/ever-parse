@@ -11,71 +11,124 @@ import (
 	"strings"
 )
 
-type Mapping struct {
-	MetaPowerIcon        reference.ImageReference
+// A MPDMapping The relevant "Properties" of an MDP file used to find additional information on the "Meta Power".
+type MPDMapping struct {
+	MetaPowerCategory  reference.ObjectReference
+	MetaPowerUIData    reference.ObjectReference
+	MetaPowerTierIndex int
+}
+
+// A MPUIMapping The relevant Properties of an MPUI file, containing UI information about the "Meta Power".
+type MPUIMapping struct {
 	MetaPowerTitle       reference.PropertyReference
 	MetaPowerDescription reference.PropertyReference
+	MetaPowerIcon        reference.ObjectReference
+}
+
+func (m MPUIMapping) GetNameProperty() reference.PropertyReference {
+	return m.MetaPowerTitle
+}
+
+func (m MPUIMapping) GetDescriptionProperty() reference.PropertyReference {
+	return m.MetaPowerDescription
 }
 
 type Info struct {
 	Id          string
 	Name        string
 	Description string
-	Source      string
+	Hero        string
 	Category    string
+	Tier        int
 }
 
-func (m Mapping) GetNameProperty() reference.PropertyReference {
-	return m.MetaPowerTitle
-}
-
-func (m Mapping) GetDescriptionProperty() reference.PropertyReference {
-	return m.MetaPowerDescription
-}
-
+// ParseTalents Parses hero talents and puts them into a talents.json file
 func ParseTalents(root string) {
-	/*
-		TODO: Re-write the entire approach for this parser.
-		Do not start with the talent file (MPUI) start with the MPD files which contain all the references for the talent.
-	*/
 	talents := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if strings.HasPrefix(info.Name(), "MPUI_") {
-			content, err := os.ReadFile(path)
-			util.Check(err, path)
-			talentRawJson := gjson.Get(string(content), "#(Type%\"VVMetaPowerUIData*\")#|0.Properties").String()
+		//Parse "MetaPowerDefinition" files, that contain references and information for the meta power (talent)
+		if strings.HasPrefix(info.Name(), "MPD_") {
+			mpdMapping := createMdpMapping(path)
+			mpuiFilePath := createMpuiFilePath(mpdMapping)
+			mpuiMapping := createMpuiMapping(mpuiFilePath)
 
-			mpdTalentFile := strings.ReplaceAll(path, "MPUI", "MPD")
-			mpdTalentFileContent, err := os.ReadFile(mpdTalentFile)
-			if err != nil {
-				println("Failed to find talent category file: " + path)
-				return nil
-			}
-			talentCategoryPath := gjson.Get(string(mpdTalentFileContent), "#(Type%\"VVMetaPowerDefinition*\")#|0.Properties.MetaPowerCategory.ObjectPath").String()
-			reference.AddSpace(reference.TalentCategoryFromPath(talentCategoryPath))
-			talentTreeId := slug.Make(reference.AddSpace(reference.TalentCategoryFromPath(talentCategoryPath)))
-
-			var talentMapping Mapping
-			err = json.Unmarshal([]byte(talentRawJson), &talentMapping)
-			if err != nil {
-				println("Failed to parse: " + path)
-				return nil
-			}
-			util.Check(err, path)
-			id := slug.Make(reference.TalentId(path))
+			//Generate talent information and append to list
 			talentInfo := Info{
-				id,
-				reference.GetName(talentMapping),
-				reference.GetDescription(talentMapping),
+				talentId(mpuiFilePath),
+				reference.GetName(mpuiMapping),
+				reference.GetDescription(mpuiMapping),
 				slug.Make(reference.Source(path)),
-				talentTreeId,
+				generateTalentCategoryId(mpuiFilePath),
+				mpdMapping.MetaPowerTierIndex,
 			}
 			talents = append(talents, talentInfo)
-			reference.CopyImageFile(talentMapping.MetaPowerIcon, id, "talent")
+			reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, "talent")
 		}
 		return nil
 	})
+	//Write file containing all talent information
 	util.Check(err)
-	err = util.WriteInfo("talent.json", talents)
-	util.Check(err, "talent.json", talents)
+	err = util.WriteInfo("talents.json", talents)
+	util.Check(err, "talents.json", talents)
+}
+
+// createMdpMapping Parses the "Properties" field from an MPD file and converts it to an MPDMapping.
+func createMdpMapping(path string) MPDMapping {
+	mpdContent, err := os.ReadFile(path)
+	util.Check(err, path)
+	mpdJson := gjson.Get(string(mpdContent), "#(Type%\"VVMetaPowerDefinition*\")#|0.Properties").String()
+	var mpdMapping MPDMapping
+	err = json.Unmarshal([]byte(mpdJson), &mpdMapping)
+	util.Check(err, path)
+	return mpdMapping
+}
+
+// createMpuiFilePath Get the MPUI file path based on the MPDMapping.
+func createMpuiFilePath(mpdMapping MPDMapping) string {
+	mpuiFilePath :=
+		reference.FixRoot(
+			strings.ReplaceAll(mpdMapping.MetaPowerUIData.ObjectPath, ".0", ".json"))
+	return mpuiFilePath
+}
+
+// createMpuiMapping Parses the "Properties" field from an MPUI file and converts it to a MPUIMapping.
+func createMpuiMapping(mpuiFilePath string) MPUIMapping {
+	mpuiContent, err := os.ReadFile(mpuiFilePath)
+	util.Check(err, mpuiFilePath)
+	mpuiJson := gjson.Get(string(mpuiContent), "#(Type%\"VVMetaPowerUIData*\")#|0.Properties").String()
+	var mpuiMapping MPUIMapping
+	err = json.Unmarshal([]byte(mpuiJson), &mpuiMapping)
+	util.Check(err, mpuiFilePath)
+	return mpuiMapping
+}
+
+// generateTalentCategoryId Finds the talent category id by parsing the string character for character in reverse.
+// The reason for going: it is easier to find the right substring due to multiple _
+func generateTalentCategoryId(path string) (subString string) {
+	reversedString := reverseString(path)
+	startOfSubstring := strings.Index(reversedString, ".")
+	if startOfSubstring == -1 {
+		return reverseString(subString)
+	}
+	tempString := reversedString[startOfSubstring+len("."):]
+	endOfSubstring := strings.Index(tempString, "_")
+	if endOfSubstring == -1 {
+		return reverseString(subString)
+	}
+	subString = tempString[:endOfSubstring]
+	talentCategory := reverseString(subString)
+	return slug.Make(reference.AddSpace(talentCategory))
+}
+
+func reverseString(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
+}
+
+func talentId(path string) string {
+	delimiter := "MPUI_"
+	return reference.GenerateId(path, delimiter)
 }
