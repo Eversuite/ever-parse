@@ -18,7 +18,7 @@ type PropertyReference struct {
 	SourceString string
 }
 
-type ImageReference struct {
+type ObjectReference struct {
 	ObjectPath string
 }
 
@@ -107,7 +107,7 @@ func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
 	if ce.RowName == noneName || len(ce.CurveTable.ObjectPath) == 0 {
 		return
 	}
-	correctRoot := fixRoot(ce.CurveTable.ObjectPath)
+	correctRoot := FixRoot(ce.CurveTable.ObjectPath)
 	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".json")
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, ce, correctRoot, cleanedPath)
@@ -122,18 +122,18 @@ func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
 }
 
 func GetReferenceValue(propertyReference PropertyReference) string {
-	correctRoot := fixRoot(propertyReference.TableId)
+	correctRoot := FixRoot(propertyReference.TableId)
 	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".json")
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, propertyReference, correctRoot, cleanedPath)
 	return gjson.Get(string(content), "#.StringTable.KeysToMetaData."+propertyReference.Key+"|0").String()
 }
 
-func CopyImageFile(abilityIcon ImageReference, id string, paths ...string) {
+func CopyImageFile(abilityIcon ObjectReference, id string, paths ...string) {
 	if abilityIcon.ObjectPath == "" {
 		return
 	}
-	correctRoot := fixRoot(abilityIcon.ObjectPath)
+	correctRoot := FixRoot(abilityIcon.ObjectPath)
 	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".png")
 	content, err := os.ReadFile(cleanedPath)
 	util.Check(err, cleanedPath)
@@ -150,6 +150,10 @@ func CopyImageFile(abilityIcon ImageReference, id string, paths ...string) {
 
 func AbilityId(path string) string {
 	delimiter := "BP_UIAbility_"
+	return GenerateId(path, delimiter)
+}
+
+func GenerateId(path string, delimiter string) string {
 	pos := strings.LastIndex(path, delimiter)
 	if pos == -1 {
 		return ""
@@ -160,20 +164,22 @@ func AbilityId(path string) string {
 	}
 	rawAbilityName := path[adjustedPos:]
 	removedFileEnding := strings.ReplaceAll(rawAbilityName, ".json", "")
-	return addSpace(strings.ReplaceAll(removedFileEnding, "_", "-"))
+	return AddSpace(strings.ReplaceAll(removedFileEnding, "_", "-"))
 }
 
 func CharacterId(path string) string {
 	folders := strings.Split(path, string(os.PathSeparator))
-	return addSpace(folders[4])
+	return AddSpace(folders[4])
 }
 
-func AbilitySource(path string) string {
+func Source(path string) string {
 	folders := strings.Split(path, string(os.PathSeparator))
-	return addSpace(folders[3])
+	return AddSpace(folders[3])
 }
 
-func addSpace(s string) string {
+// AddSpace Adds a space before any uppercase character
+// Example: MiniTank would be Mini Tank
+func AddSpace(s string) string {
 	buf := &bytes.Buffer{}
 	for i, character := range s {
 		if unicode.IsUpper(character) && i > 0 {
@@ -184,6 +190,6 @@ func addSpace(s string) string {
 	return buf.String()
 }
 
-func fixRoot(path string) string {
+func FixRoot(path string) string {
 	return strings.ReplaceAll(path, "/Game/", "Game/")
 }

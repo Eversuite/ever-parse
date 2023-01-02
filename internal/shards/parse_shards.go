@@ -13,7 +13,7 @@ import (
 )
 
 type Mapping struct {
-	ShardIcon            reference.ImageReference      `json:"AbilityIcon"`
+	ShardIcon            reference.ObjectReference     `json:"AbilityIcon"`
 	ShardName            reference.PropertyReference   `json:"AbilityName"`
 	ShardDescription     reference.PropertyReference   `json:"AbilityDescription"`
 	ShardPreviewText     reference.PropertyReference   `json:"NextLevelPreviewText"`
@@ -82,7 +82,7 @@ func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 			id,
 			reference.GetName(abilityMapping),
 			reference.GetDescription(abilityMapping),
-			slug.Make(reference.AbilitySource(path)),
+			slug.Make(reference.Source(path)),
 			reference.GetCurveProperties(abilityMapping),
 		}
 		*shards = append(*shards, shardInfo)

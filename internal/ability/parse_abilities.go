@@ -12,7 +12,7 @@ import (
 )
 
 type Mapping struct {
-	AbilityIcon                      reference.ImageReference
+	AbilityIcon                      reference.ObjectReference
 	AbilityName                      reference.PropertyReference
 	AbilityDescription               reference.PropertyReference
 	NextLevelPreviewText             reference.PropertyReference
@@ -62,7 +62,7 @@ func ParseAbilities(root string) {
 				id,
 				reference.GetName(abilityMapping),
 				reference.GetDescription(abilityMapping),
-				slug.Make(reference.AbilitySource(path)),
+				slug.Make(reference.Source(path)),
 				reference.GetCurveProperties(abilityMapping),
 			}
 
