@@ -11,14 +11,14 @@ import (
 	"strings"
 )
 
-// A MPDMapping The relevant "Properties" of an MDP file used to find additional information on the "Meta Power".
+// MPDMapping represents the relevant "Properties" inside VVMetaPowerDefinition types.
 type MPDMapping struct {
 	MetaPowerCategory  reference.ObjectReference
 	MetaPowerUIData    reference.ObjectReference
 	MetaPowerTierIndex int
 }
 
-// A MPUIMapping The relevant Properties of an MPUI file, containing UI information about the "Meta Power".
+// MPUIMapping represents the relevant "Properties" inside VVMetaPowerUIData types.
 type MPUIMapping struct {
 	MetaPowerTitle       reference.PropertyReference
 	MetaPowerDescription reference.PropertyReference
@@ -42,11 +42,11 @@ type Info struct {
 	Tier        int
 }
 
-// ParseTalents Parses hero talents and puts them into a talents.json file
+// ParseTalents Parses hero talents and writes to the talents.json file
 func ParseTalents(root string) {
 	talents := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		//Parse "MetaPowerDefinition" files, that contain references and information for the meta power (talent)
+		//Accept all MPD_* files and create mappings
 		if strings.HasPrefix(info.Name(), "MPD_") {
 			mpdMapping := createMdpMapping(path)
 			mpuiFilePath := createMpuiFilePath(mpdMapping)
@@ -62,17 +62,18 @@ func ParseTalents(root string) {
 				mpdMapping.MetaPowerTierIndex,
 			}
 			talents = append(talents, talentInfo)
+			//Copy the talent icon to the output folder
 			reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, "talent")
 		}
 		return nil
 	})
-	//Write file containing all talent information
+	//Write file containing all the talents
 	util.Check(err)
 	err = util.WriteInfo("talents.json", talents)
 	util.Check(err, "talents.json", talents)
 }
 
-// createMdpMapping Parses the "Properties" field from an MPD file and converts it to an MPDMapping.
+// createMdpMapping Parses the "Properties" field inside a VVMetaPowerDefinition type and converts it to an MPDMapping.
 func createMdpMapping(path string) MPDMapping {
 	mpdContent, err := os.ReadFile(path)
 	util.Check(err, path)
@@ -91,7 +92,7 @@ func createMpuiFilePath(mpdMapping MPDMapping) string {
 	return mpuiFilePath
 }
 
-// createMpuiMapping Parses the "Properties" field from an MPUI file and converts it to a MPUIMapping.
+// createMpuiMapping Parses the "Properties" field from a VVMetaPowerUIData type and converts it to a MPUIMapping.
 func createMpuiMapping(mpuiFilePath string) MPUIMapping {
 	mpuiContent, err := os.ReadFile(mpuiFilePath)
 	util.Check(err, mpuiFilePath)

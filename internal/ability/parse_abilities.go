@@ -11,7 +11,8 @@ import (
 	"strings"
 )
 
-type Mapping struct {
+// BPUIAbilityMapping represents the relevant "Properties" inside a BP_UIAbility_* type.
+type BPUIAbilityMapping struct {
 	AbilityIcon                      reference.ObjectReference
 	AbilityName                      reference.PropertyReference
 	AbilityDescription               reference.PropertyReference
@@ -27,37 +28,36 @@ type Info struct {
 	Properties  string
 }
 
-func (m Mapping) GetNameProperty() reference.PropertyReference {
+func (m BPUIAbilityMapping) GetNameProperty() reference.PropertyReference {
 	return m.AbilityName
 }
 
-func (m Mapping) GetDescriptionProperty() reference.PropertyReference {
+func (m BPUIAbilityMapping) GetDescriptionProperty() reference.PropertyReference {
 	return m.AbilityDescription
 }
 
-func (m Mapping) GetCurveProperty() reference.CurveTableReference {
+func (m BPUIAbilityMapping) GetCurveProperty() reference.CurveTableReference {
 	return m.DescriptionValuesFromCurveTables
 }
 
+// ParseAbilities Parses hero abilities and writes to the abilities.json file
 func ParseAbilities(root string) {
 	abilities := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		//Shards are also a BP_UIAbility type/file , just stored in a folder called "Shards". Skip them
 		if info.IsDir() && info.Name() == "Shards" {
 			return filepath.SkipDir
 		}
+		//Accept all the BP_UIAbility_* files not located inside the "Shards" and create mappings
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
-			content, err := os.ReadFile(path)
-			util.Check(err, path)
-			//Parse the ability mappings
-			abilityRawJson := gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
-			var abilityMapping Mapping
-			err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
+			err, abilityMapping := createBPUIAbilityMapping(path)
 			if err != nil {
 				println("Failed to parse: " + path)
+				println("Error:" + err.Error())
 				return nil
 			}
-			util.Check(err, path)
-			id := slug.Make(reference.AbilityId(path))
+
+			id := abilityId(path)
 			abilityInfo := Info{
 				id,
 				reference.GetName(abilityMapping),
@@ -65,16 +65,29 @@ func ParseAbilities(root string) {
 				slug.Make(reference.Source(path)),
 				reference.GetCurveProperties(abilityMapping),
 			}
-
 			abilities = append(abilities, abilityInfo)
-
+			//Copy the ability icon to the output folder
 			reference.CopyImageFile(abilityMapping.AbilityIcon, id, "abilities")
 		}
 		return nil
 	})
+	//Write file containing all teh talents
 	util.Check(err)
-
 	err = util.WriteInfo("abilities.json", abilities)
 	util.Check(err, "abilities.json", abilities)
+}
 
+// createBPUIAbilityMapping CParses hte "Properties" field inside a BP_UIAbility_* type and creates a mapping
+func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
+	content, err := os.ReadFile(path)
+	util.Check(err, path)
+	abilityRawJson := gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
+	var abilityMapping BPUIAbilityMapping
+	err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
+	return err, abilityMapping
+}
+
+func abilityId(path string) string {
+	delimiter := "BP_UIAbility_"
+	return slug.Make(reference.GenerateId(path, delimiter))
 }

@@ -1,4 +1,4 @@
-package shards
+package shard
 
 import (
 	"encoding/json"
@@ -46,13 +46,13 @@ func ParseShards(root string) {
 	err := filepath.WalkDir(root, dirWalker(&shards))
 	util.Check(err, root, shards)
 
-	err = util.WriteInfo("shards.json", shards)
-	util.Check(err, "shards.json", shards)
+	err = util.WriteInfo("shard.json", shards)
+	util.Check(err, "shard.json", shards)
 }
 
 func dirWalker(shards *[]ShardInfo) fs.WalkDirFunc {
 	return func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() && strings.ToLower(d.Name()) == "shards" {
+		if d.IsDir() && strings.ToLower(d.Name()) == "shard" {
 			return filepath.Walk(path, fileWalker(shards))
 		}
 		return err
@@ -61,7 +61,6 @@ func dirWalker(shards *[]ShardInfo) fs.WalkDirFunc {
 
 func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 	return func(path string, info fs.FileInfo, err error) error {
-
 		if !strings.HasPrefix(info.Name(), "BP_UIAbility") {
 			return err
 		}
@@ -77,7 +76,7 @@ func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 			return nil
 		}
 		util.Check(err, path)
-		id := slug.Make(reference.AbilityId(path))
+		id := slug.Make(shardId(path))
 		shardInfo := ShardInfo{
 			id,
 			reference.GetName(abilityMapping),
@@ -86,7 +85,12 @@ func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 			reference.GetCurveProperties(abilityMapping),
 		}
 		*shards = append(*shards, shardInfo)
-		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, "shards")
+		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, "shard")
 		return err
 	}
+}
+
+func shardId(path string) string {
+	delimiter := "BP_UIAbility_"
+	return reference.GenerateId(path, delimiter)
 }

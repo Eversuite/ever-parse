@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"ever-parse/internal/util"
+	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
 	"os"
 	"path/filepath"
@@ -148,11 +149,6 @@ func CopyImageFile(abilityIcon ObjectReference, id string, paths ...string) {
 	util.Check(err, content)
 }
 
-func AbilityId(path string) string {
-	delimiter := "BP_UIAbility_"
-	return GenerateId(path, delimiter)
-}
-
 func GenerateId(path string, delimiter string) string {
 	pos := strings.LastIndex(path, delimiter)
 	if pos == -1 {
@@ -164,12 +160,8 @@ func GenerateId(path string, delimiter string) string {
 	}
 	rawAbilityName := path[adjustedPos:]
 	removedFileEnding := strings.ReplaceAll(rawAbilityName, ".json", "")
-	return AddSpace(strings.ReplaceAll(removedFileEnding, "_", "-"))
-}
-
-func CharacterId(path string) string {
-	folders := strings.Split(path, string(os.PathSeparator))
-	return AddSpace(folders[4])
+	changedToDash := strings.ReplaceAll(removedFileEnding, "_", " ")
+	return slug.Make(AddSpace(changedToDash))
 }
 
 func Source(path string) string {
