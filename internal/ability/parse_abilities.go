@@ -50,14 +50,14 @@ func ParseAbilities(root string) {
 		}
 		//Accept all the BP_UIAbility_* files not located inside the "Shards" and create mappings
 		if strings.HasPrefix(info.Name(), "BP_UIAbility") {
-			err, abilityMapping := createBPUIAbilityMapping(path)
+			err, abilityMapping := CreateBPUIAbilityMapping(path)
 			if err != nil {
 				println("Failed to parse: " + path)
 				println("Error:" + err.Error())
 				return nil
 			}
 
-			id := abilityId(path)
+			id := CreateId(path)
 			abilityInfo := Info{
 				id,
 				reference.GetName(abilityMapping),
@@ -77,8 +77,8 @@ func ParseAbilities(root string) {
 	util.Check(err, "abilities.json", abilities)
 }
 
-// createBPUIAbilityMapping CParses hte "Properties" field inside a BP_UIAbility_* type and creates a mapping
-func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
+// CreateBPUIAbilityMapping CParses hte "Properties" field inside a BP_UIAbility_* type and creates a mapping
+func CreateBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
 	content, err := os.ReadFile(path)
 	util.Check(err, path)
 	abilityRawJson := gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
@@ -87,7 +87,7 @@ func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
 	return err, abilityMapping
 }
 
-func abilityId(path string) string {
+func CreateId(path string) string {
 	delimiter := "BP_UIAbility_"
 	return slug.Make(reference.GenerateId(path, delimiter))
 }
