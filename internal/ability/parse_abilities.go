@@ -25,6 +25,7 @@ type Info struct {
 	Name        string
 	Description string
 	Source      string
+	Slot        string
 	Properties  string
 }
 
@@ -63,6 +64,7 @@ func ParseAbilities(root string) {
 				reference.GetName(abilityMapping),
 				reference.GetDescription(abilityMapping),
 				slug.Make(reference.Source(path)),
+				parseAbilitySlot(abilityMapping.AbilityName),
 				reference.GetCurveProperties(abilityMapping),
 			}
 			abilities = append(abilities, abilityInfo)
@@ -90,4 +92,11 @@ func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
 func abilityId(path string) string {
 	delimiter := "BP_UIAbility_"
 	return slug.Make(reference.GenerateId(path, delimiter))
+}
+
+func parseAbilitySlot(abilityReference reference.PropertyReference) string {
+	if abilityReference.Key == "" {
+		return ""
+	}
+	return abilityReference.Key[0:1]
 }
