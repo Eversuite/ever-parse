@@ -20,7 +20,13 @@ func Check(err error, data ...any) {
 	}
 	fmt.Printf("[Critical] Error{%s} Data [%+v\n]", err, data)
 	panic(err)
+}
 
+func CheckWithoutPanic(err error, data ...any) {
+	if err == nil {
+		return
+	}
+	fmt.Printf("[Warning] Error{%s} Data [%+v]\n", err, data)
 }
 
 func WriteInfo[T any](file string, infos []T) error {
