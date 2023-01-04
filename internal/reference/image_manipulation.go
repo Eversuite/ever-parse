@@ -2,19 +2,26 @@ package reference
 
 import (
 	"ever-parse/internal/util"
-	"fmt"
 	"image"
 	"image/png"
+	"log"
 	"math"
 	"os"
 )
 
-func cropImage(path string) (img image.Image, didCrop bool) {
+func cropImage(path string) (img *image.Image, didCrop bool) {
 	imgFile, err := os.OpenFile(path, os.O_RDONLY, 0644)
-	util.CheckWithoutPanic(err, "imagefile", path)
+
+	if err != nil {
+		log.Printf("Unable to open file [%s].", path)
+		return nil, false
+	}
 
 	srcImg, err := png.Decode(imgFile)
-	util.CheckWithoutPanic(err, "srcImg image", path)
+	if err != nil {
+		log.Printf("Could not decode file as png [%s]", path)
+		return nil, false
+	}
 
 	type cropableImage interface {
 		SubImage(r image.Rectangle) image.Image
@@ -23,20 +30,21 @@ func cropImage(path string) (img image.Image, didCrop bool) {
 	cropable, ok := srcImg.(cropableImage)
 	longestBorder := math.Max(float64(srcImg.Bounds().Dx()), float64(srcImg.Bounds().Dy()))
 
-	if ok && longestBorder > 4000 {
-		// I'm pretty sure traverseFirst and traverseSecond can somehow be combined but at this point my brain is melted...
-		firstY := traverseFirst(srcImg, xA)
-		firstX := traverseFirst(srcImg, yA)
-		lastY := traverseLast(srcImg, xA)
-		lastX := traverseLast(srcImg, yA)
-		rect := image.Rect(firstX.X, firstY.Y, lastX.X, lastY.Y)
-
-		fmt.Printf("Cropped to [%+v] from [%+v] for [%s]\n", rect, srcImg.Bounds(), path)
-
-		return cropable.SubImage(rect), true
+	if ok && longestBorder < 4000 {
+		return &srcImg, false
 	}
 
-	return srcImg, false
+	// I'm pretty sure traverseFirst and traverseSecond can somehow be combined but at this point my brain is melted...
+	firstY := traverseFirst(srcImg, xA)
+	firstX := traverseFirst(srcImg, yA)
+	lastY := traverseLast(srcImg, xA)
+	lastX := traverseLast(srcImg, yA)
+	rect := image.Rect(firstX.X, firstY.Y, lastX.X, lastY.Y)
+
+	log.Printf("Cropped to [%+v] from [%+v] for [%s]\n", rect, srcImg.Bounds(), path)
+
+	subImage := cropable.SubImage(rect)
+	return &subImage, true
 }
 
 type Axis bool

@@ -87,15 +87,16 @@ func GetDescription(m DataMapping) string {
 }
 
 func GetCurveProperties(m CurvePropertiesMapping) string {
-	abilityProps := ""
-	if m.GetCurveProperty() != nil {
-		jsonBytes, err := json.Marshal(m.GetCurveProperty().GetValues())
-		util.Check(err, m)
-		abilityProps = string(jsonBytes)
+	if m.GetCurveProperty() == nil {
+		return ""
 	}
-	return abilityProps
+	jsonBytes, err := json.Marshal(m.GetCurveProperty().GetValues())
+	util.Check(err, m)
+	return string(jsonBytes)
 }
 
+// GetValues retrieves all CurvePoint s for each entry in the reference.
+// A CurveTableReference may contain multiple entries.
 func (c CurveTableReference) GetValues() map[string][]CurvePoint {
 	result := make(map[string][]CurvePoint, len(c))
 	for key, entry := range c {
@@ -105,6 +106,9 @@ func (c CurveTableReference) GetValues() map[string][]CurvePoint {
 	return result
 }
 
+// getValue retrieves all values from a CurveTableReferenceEntry.
+// A single entry consists of all points on that curve.
+// A CurvePoint is defined by their x and y value where x is usually the 'time' and y the value f(x)
 func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
 	if ce.RowName == noneName || len(ce.CurveTable.ObjectPath) == 0 {
 		return
@@ -145,14 +149,14 @@ func CopyImageFile(abilityIcon ObjectReference, id string, paths ...string) {
 	dir, err := util.CreateDir(paths...)
 	util.Check(err)
 
-	stuff, didCrop := cropImage(cleanedPath)
+	croppedImage, didCrop := cropImage(cleanedPath)
 	croppedFileName := filepath.Join(dir, id+"-cropped.png")
 
 	croppedFile, err := os.OpenFile(croppedFileName, os.O_CREATE|os.O_RDWR, 0644)
-	util.CheckWithoutPanic(err, "unable to create/write cropped file: "+id+"-cropped.png")
+	util.Check(err, "unable to create/write cropped file: "+id+"-cropped.png")
 	if err == nil && didCrop {
-		err = png.Encode(croppedFile, stuff)
-		util.CheckWithoutPanic(err, "Could not safe file")
+		err = png.Encode(croppedFile, *croppedImage)
+		util.Check(err, "Could not safe file as PNG", croppedFile)
 		return
 	}
 
