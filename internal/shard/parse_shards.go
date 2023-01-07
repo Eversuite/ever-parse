@@ -46,13 +46,13 @@ func ParseShards(root string) {
 	err := filepath.WalkDir(root, dirWalker(&shards))
 	util.Check(err, root, shards)
 
-	err = util.WriteInfo("shard.json", shards)
-	util.Check(err, "shard.json", shards)
+	err = util.WriteInfo("shards.json", shards)
+	util.Check(err, "shards.json", shards)
 }
 
 func dirWalker(shards *[]ShardInfo) fs.WalkDirFunc {
 	return func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() && strings.ToLower(d.Name()) == "shard" {
+		if d.IsDir() && strings.ToLower(d.Name()) == "shards" {
 			return filepath.Walk(path, fileWalker(shards))
 		}
 		return err
