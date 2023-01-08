@@ -8,7 +8,6 @@ import (
 	"github.com/tidwall/gjson"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -63,7 +62,7 @@ func ParseAbilities(root string) {
 			abilityInfo := Info{
 				id,
 				reference.GetName(abilityMapping),
-				fixTags(reference.GetDescription(abilityMapping)),
+				util.FixTags(reference.GetDescription(abilityMapping)),
 				slug.Make(reference.Source(path)),
 				parseAbilitySlot(abilityMapping.AbilityName),
 				reference.GetCurveProperties(abilityMapping),
@@ -100,18 +99,4 @@ func parseAbilitySlot(abilityReference reference.PropertyReference) string {
 		return ""
 	}
 	return abilityReference.Key[0:1]
-}
-
-// fixTags create valid html element tags by replacing the closing tag </> with a valid html closing tag </health>
-// This makes it easier to style the text in the UI
-// Example: <health>Health</> -> <health>Health</health>
-func fixTags(description string) string {
-	descriptionCopy := description
-	pattern := regexp.MustCompile("<[^\\/]+>")
-	tags := pattern.FindAllString(descriptionCopy, -1)
-	for _, tag := range tags {
-		endTag := strings.Replace(tag, "<", "</", 1)
-		descriptionCopy = strings.Replace(descriptionCopy, "</>", endTag, 1)
-	}
-	return descriptionCopy
 }

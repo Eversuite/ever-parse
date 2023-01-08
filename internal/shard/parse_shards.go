@@ -80,7 +80,7 @@ func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 		shardInfo := ShardInfo{
 			id,
 			reference.GetName(abilityMapping),
-			reference.GetDescription(abilityMapping),
+			util.FixTags(reference.GetDescription(abilityMapping)),
 			slug.Make(reference.Source(path)),
 			reference.GetCurveProperties(abilityMapping),
 		}

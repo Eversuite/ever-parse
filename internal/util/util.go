@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 const ParsedDataDir = "parsedData"
@@ -49,4 +51,18 @@ func CreateDir(paths ...string) (string, error) {
 		return "", err
 	}
 	return dir, nil
+}
+
+// FixTags create valid html element tags by replacing the closing tag </> with a valid html closing tag </health>
+// This makes it easier to style the text in the UI
+// Example: <health>Health</> -> <health>Health</health>
+func FixTags(description string) string {
+	descriptionCopy := description
+	pattern := regexp.MustCompile("<[^\\/]+>")
+	tags := pattern.FindAllString(descriptionCopy, -1)
+	for _, tag := range tags {
+		endTag := strings.Replace(tag, "<", "</", 1)
+		descriptionCopy = strings.Replace(descriptionCopy, "</>", endTag, 1)
+	}
+	return descriptionCopy
 }
