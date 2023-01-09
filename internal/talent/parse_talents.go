@@ -58,7 +58,7 @@ func ParseTalents(root string) {
 				reference.GetName(mpuiMapping),
 				reference.GetDescription(mpuiMapping),
 				slug.Make(reference.Source(path)),
-				generateTalentCategoryId(mpuiFilePath),
+				generateTalentCategoryId(mpdMapping.MetaPowerCategory.ObjectPath),
 				mpdMapping.MetaPowerTierIndex,
 			}
 			talents = append(talents, talentInfo)
