@@ -63,7 +63,7 @@ func ParseAbilities(root string) {
 				id,
 				reference.GetName(abilityMapping),
 				util.FixTags(reference.GetDescription(abilityMapping)),
-				slug.Make(reference.Source(path)),
+				reference.Source(path),
 				parseAbilitySlot(abilityMapping.AbilityName),
 				reference.GetCurveProperties(abilityMapping),
 			}

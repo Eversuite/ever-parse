@@ -166,7 +166,7 @@ func GenerateId(path string, delimiter string) string {
 
 func Source(path string) string {
 	folders := strings.Split(path, string(os.PathSeparator))
-	return AddSpace(folders[3])
+	return slug.Make(AddSpace(folders[3]))
 }
 
 // AddSpace Adds a space before any uppercase character
