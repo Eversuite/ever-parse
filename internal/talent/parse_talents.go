@@ -51,13 +51,14 @@ func ParseTalents(root string) {
 			mpdMapping := createMdpMapping(path)
 			mpuiFilePath := createMpuiFilePath(mpdMapping)
 			mpuiMapping := createMpuiMapping(mpuiFilePath)
+			hero := reference.Source(path)
 
 			//Generate talent information and append to list
 			talentInfo := Info{
-				talentId(mpuiFilePath),
+				talentId(mpuiFilePath, hero),
 				reference.GetName(mpuiMapping),
 				reference.GetDescription(mpuiMapping),
-				reference.Source(path),
+				hero,
 				GenerateTalentCategoryId(mpdMapping.MetaPowerCategory.ObjectPath),
 				mpdMapping.MetaPowerTierIndex,
 			}
@@ -129,7 +130,7 @@ func reverseString(s string) string {
 	return string(runes)
 }
 
-func talentId(path string) string {
+func talentId(path string, source string) string {
 	delimiter := "MPUI_"
-	return reference.GenerateId(path, delimiter)
+	return source + "-" + reference.GenerateId(path, delimiter)
 }
