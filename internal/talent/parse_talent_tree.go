@@ -47,8 +47,8 @@ func ParseTalentTrees(root string) {
 			id := source + "-" + GenerateTalentCategoryId(path)
 			talentTrees = append(talentTrees, TreeInfo{
 				Id:          id,
-				Name:        talentTreeMapping.GetNameProperty().SourceString,
-				Description: talentTreeMapping.GetDescriptionProperty().SourceString,
+				Name:        reference.GetName(talentTreeMapping),
+				Description: reference.GetDescription(talentTreeMapping),
 				Source:      source,
 			})
 		}
