@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -21,6 +22,7 @@ func Check(err error, data ...any) {
 	}
 	fmt.Printf("[Critical] Error{%s} Data [%+v\n]", err, data)
 	panic(err)
+
 }
 
 func WriteInfo[T any](file string, infos []T) error {
@@ -44,7 +46,7 @@ func WriteInfo[T any](file string, infos []T) error {
 
 func CreateDir(paths ...string) (string, error) {
 	dir := filepath.Join(paths...)
-	err := os.MkdirAll(dir, 0777)
+	err := os.MkdirAll(dir, fs.ModeDir)
 
 	if err != nil {
 		return "", err
@@ -64,7 +66,6 @@ func FixTags(description string) string {
 	}
 	return descriptionCopy
 }
-
 func Ternary[T any](check bool, a, b T) T {
 	if check {
 		return a
