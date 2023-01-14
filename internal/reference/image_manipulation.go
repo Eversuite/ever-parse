@@ -74,7 +74,7 @@ func traverseFirst(img image.Image, axis Axis) image.Point {
 				Y: y,
 			}
 		}
-		counter += 5
+		counter++
 	}
 
 	// Could also return an error but why should I
@@ -102,7 +102,7 @@ func traverseLast(img image.Image, axis Axis) image.Point {
 				Y: y,
 			}
 		}
-		counter -= 5
+		counter--
 	}
 
 	// Could also return an error but why should I
