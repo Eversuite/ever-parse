@@ -51,14 +51,15 @@ func ParseTalents(root string) {
 			mpdMapping := createMdpMapping(path)
 			mpuiFilePath := createMpuiFilePath(mpdMapping)
 			mpuiMapping := createMpuiMapping(mpuiFilePath)
+			hero := reference.Source(path)
 
 			//Generate talent information and append to list
 			talentInfo := Info{
-				talentId(mpuiFilePath),
+				talentId(mpuiFilePath, hero),
 				reference.GetName(mpuiMapping),
 				reference.GetDescription(mpuiMapping),
-				slug.Make(reference.Source(path)),
-				generateTalentCategoryId(mpdMapping.MetaPowerCategory.ObjectPath),
+				hero,
+				GenerateTalentCategoryId(mpdMapping.MetaPowerCategory.ObjectPath),
 				mpdMapping.MetaPowerTierIndex,
 			}
 			talents = append(talents, talentInfo)
@@ -103,9 +104,9 @@ func createMpuiMapping(mpuiFilePath string) MPUIMapping {
 	return mpuiMapping
 }
 
-// generateTalentCategoryId Finds the talent category id by parsing the string character for character in reverse.
+// GenerateTalentCategoryId Finds the talent category id by parsing the string character for character in reverse.
 // The reason for going: it is easier to find the right substring due to multiple _
-func generateTalentCategoryId(path string) (subString string) {
+func GenerateTalentCategoryId(path string) (subString string) {
 	reversedString := reverseString(path)
 	startOfSubstring := strings.Index(reversedString, ".")
 	if startOfSubstring == -1 {
@@ -129,7 +130,7 @@ func reverseString(s string) string {
 	return string(runes)
 }
 
-func talentId(path string) string {
+func talentId(path string, source string) string {
 	delimiter := "MPUI_"
-	return reference.GenerateId(path, delimiter)
+	return source + "-" + reference.GenerateId(path, delimiter)
 }

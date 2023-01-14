@@ -17,6 +17,7 @@ func main() {
 	character.ParseCharacters(".")
 	shard.ParseShards(".")
 	talent.ParseTalents(".")
+	talent.ParseTalentTrees(".")
 
 }
 

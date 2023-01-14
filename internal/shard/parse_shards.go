@@ -81,7 +81,7 @@ func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 			id,
 			reference.GetName(abilityMapping),
 			util.FixTags(reference.GetDescription(abilityMapping)),
-			slug.Make(reference.Source(path)),
+			reference.Source(path),
 			reference.GetCurveProperties(abilityMapping),
 		}
 		*shards = append(*shards, shardInfo)
