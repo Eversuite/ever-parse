@@ -150,11 +150,11 @@ func CopyImageFile(abilityIcon ObjectReference, id string, paths ...string) {
 	util.Check(err)
 
 	croppedImage, didCrop := cropImage(cleanedPath)
-	croppedFileName := filepath.Join(dir, id+"-cropped.png")
 
-	croppedFile, err := os.OpenFile(croppedFileName, os.O_CREATE|os.O_RDWR, 0644)
-	util.Check(err, "unable to create/write cropped file: "+id+"-cropped.png")
 	if err == nil && didCrop {
+		croppedFileName := filepath.Join(dir, id+"-cropped.png")
+		croppedFile, err := os.OpenFile(croppedFileName, os.O_CREATE|os.O_RDWR, 0644)
+		util.Check(err, "unable to create/write cropped file: "+id+"-cropped.png")
 		err = png.Encode(croppedFile, *croppedImage)
 		util.Check(err, "Could not safe file as PNG", croppedFile)
 		return
