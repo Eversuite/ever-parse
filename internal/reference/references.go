@@ -6,6 +6,7 @@ import (
 	"ever-parse/internal/util"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
+	"image/png"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -86,15 +87,16 @@ func GetDescription(m DataMapping) string {
 }
 
 func GetCurveProperties(m CurvePropertiesMapping) string {
-	abilityProps := ""
-	if m.GetCurveProperty() != nil {
-		jsonBytes, err := json.Marshal(m.GetCurveProperty().GetValues())
-		util.Check(err, m)
-		abilityProps = string(jsonBytes)
+	if m.GetCurveProperty() == nil {
+		return ""
 	}
-	return abilityProps
+	jsonBytes, err := json.Marshal(m.GetCurveProperty().GetValues())
+	util.Check(err, m)
+	return string(jsonBytes)
 }
 
+// GetValues retrieves all CurvePoint s for each entry in the reference.
+// A CurveTableReference may contain multiple entries.
 func (c CurveTableReference) GetValues() map[string][]CurvePoint {
 	result := make(map[string][]CurvePoint, len(c))
 	for key, entry := range c {
@@ -104,6 +106,9 @@ func (c CurveTableReference) GetValues() map[string][]CurvePoint {
 	return result
 }
 
+// getValue retrieves all values from a CurveTableReferenceEntry.
+// A single entry consists of all points on that curve.
+// A CurvePoint is defined by their x and y value where x is usually the 'time' and y the value f(x)
 func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
 	if ce.RowName == noneName || len(ce.CurveTable.ObjectPath) == 0 {
 		return
@@ -143,6 +148,17 @@ func CopyImageFile(abilityIcon ObjectReference, id string, paths ...string) {
 	paths = append([]string{".", ProjectVImagePath}, paths...)
 	dir, err := util.CreateDir(paths...)
 	util.Check(err)
+
+	croppedImage, didCrop := cropImage(cleanedPath)
+
+	if err == nil && didCrop {
+		croppedFileName := filepath.Join(dir, id+"-cropped.png")
+		croppedFile, err := os.OpenFile(croppedFileName, os.O_CREATE|os.O_RDWR, 0644)
+		util.Check(err, "unable to create/write cropped file: "+id+"-cropped.png")
+		err = png.Encode(croppedFile, *croppedImage)
+		util.Check(err, "Could not safe file as PNG", croppedFile)
+		return
+	}
 
 	file := filepath.Join(dir, id+".png")
 	err = os.WriteFile(file, content, 0644)
