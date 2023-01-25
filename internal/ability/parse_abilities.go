@@ -62,7 +62,7 @@ func ParseAbilities(root string) {
 			abilityInfo := Info{
 				id,
 				reference.GetName(abilityMapping),
-				util.FixTags(reference.GetDescription(abilityMapping)),
+				util.ToValidHtml(reference.GetDescription(abilityMapping)),
 				reference.Source(path),
 				parseAbilitySlot(abilityMapping.AbilityName),
 				reference.GetCurveProperties(abilityMapping),
