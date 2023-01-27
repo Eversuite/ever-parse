@@ -2,7 +2,6 @@ package reference
 
 import (
 	"bytes"
-	"encoding/json"
 	"ever-parse/internal/util"
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
@@ -24,32 +23,11 @@ type ObjectReference struct {
 	ObjectPath string
 }
 
-// CurveTableReference type alias to work with reference entries.
-// The CurveTableReference contains an arbitrary amount of properties with their corresponding CurveTable references.
-type CurveTableReference map[string]CurveTableReferenceEntry
-
-// CurveTableReferenceEntry contains a reference to the CurveTable and its corresponding row associated with the property
-type CurveTableReferenceEntry struct {
-	CurveTable struct {
-		ObjectPath string
-	}
-	RowName string
-}
-
-type CurvePoint struct {
-	Time  float64
-	Value float64
-}
-
 // DataMapping is an interface for mapping types which grant access to a "name" property and "description" property.
 // The properties must be PropertyReference s
 type DataMapping interface {
 	GetNameProperty() PropertyReference
 	GetDescriptionProperty() PropertyReference
-}
-
-type CurvePropertiesMapping interface {
-	GetCurveProperty() CurveTableReference
 }
 
 const noneName string = "None"
@@ -84,47 +62,6 @@ func GetDescription(m DataMapping) string {
 	}
 
 	return "UnknownDescriptionProperty"
-}
-
-func GetCurveProperties(m CurvePropertiesMapping) string {
-	if m.GetCurveProperty() == nil {
-		return ""
-	}
-	jsonBytes, err := json.Marshal(m.GetCurveProperty().GetValues())
-	util.Check(err, m)
-	return string(jsonBytes)
-}
-
-// GetValues retrieves all CurvePoint s for each entry in the reference.
-// A CurveTableReference may contain multiple entries.
-func (c CurveTableReference) GetValues() map[string][]CurvePoint {
-	result := make(map[string][]CurvePoint, len(c))
-	for key, entry := range c {
-		points := entry.getValue()
-		result[key] = points
-	}
-	return result
-}
-
-// getValue retrieves all values from a CurveTableReferenceEntry.
-// A single entry consists of all points on that curve.
-// A CurvePoint is defined by their x and y value where x is usually the 'time' and y the value f(x)
-func (ce CurveTableReferenceEntry) getValue() (curvePoints []CurvePoint) {
-	if ce.RowName == noneName || len(ce.CurveTable.ObjectPath) == 0 {
-		return
-	}
-	correctRoot := FixRoot(ce.CurveTable.ObjectPath)
-	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".json")
-	content, err := os.ReadFile(cleanedPath)
-	util.Check(err, ce, correctRoot, cleanedPath)
-	curvePointsJson := gjson.Get(string(content), "#.Rows."+ce.RowName+".Keys|0").String()
-	curvePointsJson = whitespaceRegex.ReplaceAllString(curvePointsJson, "")
-	if len(curvePointsJson) == 0 {
-		return
-	}
-	err = json.Unmarshal([]byte(curvePointsJson), &curvePoints)
-	util.Check(err, ce.CurveTable.ObjectPath, ce.RowName, curvePointsJson)
-	return
 }
 
 func GetReferenceValue(propertyReference PropertyReference) string {
