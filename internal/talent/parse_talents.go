@@ -57,7 +57,7 @@ func ParseTalents(root string) {
 			talentInfo := Info{
 				talentId(mpuiFilePath, hero),
 				reference.GetName(mpuiMapping),
-				reference.GetDescription(mpuiMapping),
+				util.ToValidHtml(reference.GetDescription(mpuiMapping)),
 				hero,
 				GenerateTalentCategoryId(mpdMapping.MetaPowerCategory.ObjectPath),
 				mpdMapping.MetaPowerTierIndex,
