@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
-	"github.com/gosimple/slug"
-	"github.com/tidwall/gjson"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gosimple/slug"
+	"github.com/tidwall/gjson"
 )
 
 // BPPlayerMapping represents the relevant "Properties" inside BP_Player_* types.
@@ -52,12 +53,13 @@ func ParseCharacters(root string) {
 				reference.GetDescription(characterMapping),
 				characterMapping.getRole(),
 			}
-			characters = append(characters, characterInfo)
-
-			//Copy character images to output folder
-			reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview", "characters", "preview")
-			reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default", "characters", "default-skin")
-			reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait", "characters", "portraits")
+			if util.IsHeroWhitelisted(characterInfo.Id) {
+				characters = append(characters, characterInfo)
+				//Copy character images to output folder
+				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview", "characters", "preview")
+				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default", "characters", "default-skin")
+				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait", "characters", "portraits")
+			}
 		}
 		return nil
 	})

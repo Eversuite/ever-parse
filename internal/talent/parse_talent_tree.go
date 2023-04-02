@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
-	"github.com/tidwall/gjson"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/tidwall/gjson"
 )
 
 // VVMetaPowerCategoryMapping represents the relevant "Properties" inside a VVMetaPowerCategoryMapping type.
@@ -45,12 +46,15 @@ func ParseTalentTrees(root string) {
 			}
 			source := reference.Source(path)
 			id := source + "-" + GenerateTalentCategoryId(path)
-			talentTrees = append(talentTrees, TreeInfo{
-				Id:          id,
-				Name:        reference.GetName(talentTreeMapping),
-				Description: reference.GetDescription(talentTreeMapping),
-				Source:      source,
-			})
+			if util.IsHeroWhitelisted(source) {
+				talentTrees = append(talentTrees, TreeInfo{
+					Id:          id,
+					Name:        reference.GetName(talentTreeMapping),
+					Description: reference.GetDescription(talentTreeMapping),
+					Source:      source,
+				})
+			}
+
 		}
 		return nil
 	})
