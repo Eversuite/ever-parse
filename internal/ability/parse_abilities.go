@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
-	"github.com/gosimple/slug"
-	"github.com/tidwall/gjson"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gosimple/slug"
+	"github.com/tidwall/gjson"
 )
 
 // BPUIAbilityMapping represents the relevant "Properties" inside a BP_UIAbility_* type.
@@ -67,9 +68,12 @@ func ParseAbilities(root string) {
 				parseAbilitySlot(abilityMapping.AbilityName),
 				reference.GetCurveProperties(abilityMapping),
 			}
-			abilities = append(abilities, abilityInfo)
-			//Copy the ability icon to the output folder
-			reference.CopyImageFile(abilityMapping.AbilityIcon, id, "abilities")
+			//check if ability.info is inside array
+			if util.IsHeroWhitelisted(abilityInfo.Source) {
+				abilities = append(abilities, abilityInfo)
+				//Copy the ability icon to the output folder
+				reference.CopyImageFile(abilityMapping.AbilityIcon, id, "abilities")
+			}
 		}
 		return nil
 	})

@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
-	"github.com/gosimple/slug"
-	"github.com/tidwall/gjson"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gosimple/slug"
+	"github.com/tidwall/gjson"
 )
 
 // MPDMapping represents the relevant "Properties" inside VVMetaPowerDefinition types.
@@ -62,9 +63,11 @@ func ParseTalents(root string) {
 				GenerateTalentCategoryId(mpdMapping.MetaPowerCategory.ObjectPath),
 				mpdMapping.MetaPowerTierIndex,
 			}
-			talents = append(talents, talentInfo)
-			//Copy the talent icon to the output folder
-			reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, "talent")
+			if util.IsHeroWhitelisted(talentInfo.Hero) {
+				talents = append(talents, talentInfo)
+				//Copy the talent icon to the output folder
+				reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, "talent")
+			}
 		}
 		return nil
 	})
