@@ -45,7 +45,7 @@ func ParseTalentTrees(root string) {
 				return nil
 			}
 			source := reference.Source(path)
-			id := source + "-" + GenerateTalentCategoryId(path)
+			id := GenerateTalentCategoryId(source, path)
 			if util.IsHeroWhitelisted(source) {
 				talentTrees = append(talentTrees, TreeInfo{
 					Id:          id,
