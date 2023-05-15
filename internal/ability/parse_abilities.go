@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
@@ -43,7 +44,7 @@ func (m BPUIAbilityMapping) GetCurveProperty() reference.CurveTableReference {
 }
 
 // ParseAbilities Parses hero abilities and writes to the abilities.json file
-func ParseAbilities(root string) {
+func ParseAbilities(root string, group *sync.WaitGroup) {
 	abilities := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		//Shards are also a BP_UIAbility type/file , just stored in a folder called "Shards". Skip them
@@ -72,7 +73,7 @@ func ParseAbilities(root string) {
 			if util.IsHeroWhitelisted(abilityInfo.Source) {
 				abilities = append(abilities, abilityInfo)
 				//Copy the ability icon to the output folder
-				reference.CopyImageFile(abilityMapping.AbilityIcon, id, "abilities")
+				reference.CopyImageFile(abilityMapping.AbilityIcon, id, group, "abilities")
 			}
 		}
 		return nil

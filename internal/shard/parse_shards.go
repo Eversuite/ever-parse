@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 type Mapping struct {
@@ -40,26 +41,26 @@ type ShardInfo struct {
 	Properties  string
 }
 
-func ParseShards(root string) {
+func ParseShards(root string, group *sync.WaitGroup) {
 	shards := make([]ShardInfo, 0)
 
-	err := filepath.WalkDir(root, dirWalker(&shards))
+	err := filepath.WalkDir(root, dirWalker(&shards, group))
 	util.Check(err, root, shards)
 
 	err = util.WriteInfo("shards.json", shards)
 	util.Check(err, "shards.json", shards)
 }
 
-func dirWalker(shards *[]ShardInfo) fs.WalkDirFunc {
+func dirWalker(shards *[]ShardInfo, group *sync.WaitGroup) fs.WalkDirFunc {
 	return func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() && strings.ToLower(d.Name()) == "shards" {
-			return filepath.Walk(path, fileWalker(shards))
+			return filepath.Walk(path, fileWalker(shards, group))
 		}
 		return err
 	}
 }
 
-func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
+func fileWalker(shards *[]ShardInfo, group *sync.WaitGroup) filepath.WalkFunc {
 	return func(path string, info fs.FileInfo, err error) error {
 		if !strings.HasPrefix(info.Name(), "BP_UIAbility") {
 			return err
@@ -85,7 +86,7 @@ func fileWalker(shards *[]ShardInfo) filepath.WalkFunc {
 			reference.GetCurveProperties(abilityMapping),
 		}
 		*shards = append(*shards, shardInfo)
-		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, "shard")
+		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, group, "shard")
 		return err
 	}
 }

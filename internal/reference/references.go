@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"unicode"
 )
 
@@ -72,34 +73,40 @@ func GetReferenceValue(propertyReference PropertyReference) string {
 	return gjson.Get(string(content), "#.StringTable.KeysToMetaData."+propertyReference.Key+"|0").String()
 }
 
-func CopyImageFile(abilityIcon ObjectReference, id string, paths ...string) {
-	if abilityIcon.ObjectPath == "" {
-		return
-	}
-	correctRoot := FixRoot(abilityIcon.ObjectPath)
-	cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".png")
-	content, err := os.ReadFile(cleanedPath)
-	util.Check(err, cleanedPath)
+func CopyImageFile(abilityIcon ObjectReference, id string, group *sync.WaitGroup, paths ...string) {
+	group.Add(1)
 
-	// Build the image path.
-	paths = append([]string{".", ProjectVImagePath}, paths...)
-	dir, err := util.CreateDir(paths...)
-	util.Check(err)
+	go func() {
+		defer group.Done()
 
-	croppedImage, didCrop := cropImage(cleanedPath)
+		if abilityIcon.ObjectPath == "" {
+			return
+		}
+		correctRoot := FixRoot(abilityIcon.ObjectPath)
+		cleanedPath := jsonRegex.ReplaceAllString(correctRoot, ".png")
+		content, err := os.ReadFile(cleanedPath)
+		util.Check(err, cleanedPath)
 
-	if err == nil && didCrop {
-		croppedFileName := filepath.Join(dir, id+"-cropped.png")
-		croppedFile, err := os.OpenFile(croppedFileName, os.O_CREATE|os.O_RDWR, 0644)
-		util.Check(err, "unable to create/write cropped file: "+id+"-cropped.png")
-		err = png.Encode(croppedFile, *croppedImage)
-		util.Check(err, "Could not safe file as PNG", croppedFile)
-		return
-	}
+		// Build the image path.
+		paths = append([]string{".", ProjectVImagePath}, paths...)
+		dir, err := util.CreateDir(paths...)
+		util.Check(err)
 
-	file := filepath.Join(dir, id+".png")
-	err = os.WriteFile(file, content, 0644)
-	util.Check(err, content)
+		croppedImage, didCrop := cropImage(cleanedPath)
+
+		if err == nil && didCrop {
+			croppedFileName := filepath.Join(dir, id+"-cropped.png")
+			croppedFile, err := os.OpenFile(croppedFileName, os.O_CREATE|os.O_RDWR, 0644)
+			util.Check(err, "unable to create/write cropped file: "+id+"-cropped.png")
+			err = png.Encode(croppedFile, *croppedImage)
+			util.Check(err, "Could not safe file as PNG", croppedFile)
+			return
+		}
+
+		file := filepath.Join(dir, id+".png")
+		err = os.WriteFile(file, content, 0644)
+		util.Check(err, content)
+	}()
 }
 
 func GenerateId(path string, delimiter string) string {

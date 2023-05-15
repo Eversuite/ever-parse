@@ -7,17 +7,37 @@ import (
 	"ever-parse/internal/shard"
 	"ever-parse/internal/talent"
 	"ever-parse/internal/util"
+	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
+	"time"
 )
 
 func main() {
+	start := time.Now()
+
 	cleanupPreviousRun()
-	ability.ParseAbilities(".")
-	character.ParseCharacters(".")
-	shard.ParseShards(".")
-	talent.ParseTalents(".")
-	talent.ParseTalentTrees(".")
+	group := &sync.WaitGroup{}
+
+	parallelize(group, func() { ability.ParseAbilities(".", group) })
+	parallelize(group, func() { character.ParseCharacters(".", group) })
+	parallelize(group, func() { shard.ParseShards(".", group) })
+	parallelize(group, func() { talent.ParseTalents(".", group) })
+	parallelize(group, func() { talent.ParseTalentTrees(".") })
+
+	group.Wait()
+
+	fmt.Printf("Run took: %+v\n", time.Now().Sub(start))
+
+}
+
+func parallelize(group *sync.WaitGroup, f func()) {
+	group.Add(1)
+	go func() {
+		defer group.Done()
+		f()
+	}()
 
 }
 

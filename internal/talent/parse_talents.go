@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
@@ -44,7 +45,7 @@ type Info struct {
 }
 
 // ParseTalents Parses hero talents and writes to the talents.json file
-func ParseTalents(root string) {
+func ParseTalents(root string, group *sync.WaitGroup) {
 	talents := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		//Accept all MPD_* files and create mappings
@@ -66,7 +67,7 @@ func ParseTalents(root string) {
 			if util.IsHeroWhitelisted(talentInfo.Hero) {
 				talents = append(talents, talentInfo)
 				//Copy the talent icon to the output folder
-				reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, "talent")
+				reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, group, "talent")
 			}
 		}
 		return nil
