@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/gosimple/slug"
 	"github.com/tidwall/gjson"
@@ -38,7 +39,7 @@ type Info struct {
 }
 
 // ParseCharacters Parses heroes and writes to the heroes.json file
-func ParseCharacters(root string) {
+func ParseCharacters(root string, group *sync.WaitGroup) {
 	characters := make([]Info, 0)
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		// Find BP_PLayer_* files and create a mapping
@@ -56,9 +57,9 @@ func ParseCharacters(root string) {
 			if util.IsHeroWhitelisted(characterInfo.Id) {
 				characters = append(characters, characterInfo)
 				//Copy character images to output folder
-				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview", "characters", "preview")
-				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default", "characters", "default-skin")
-				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait", "characters", "portraits")
+				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview", group, "characters", "preview")
+				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default", group, "characters", "default-skin")
+				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait", group, "characters", "portraits")
 			}
 		}
 		return nil
