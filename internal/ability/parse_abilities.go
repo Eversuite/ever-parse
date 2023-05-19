@@ -3,6 +3,7 @@ package ability
 import (
 	"encoding/json"
 	"ever-parse/internal/reference"
+	"ever-parse/internal/specials"
 	"ever-parse/internal/util"
 	"os"
 	"path/filepath"
@@ -28,6 +29,7 @@ type Info struct {
 	Description string
 	Source      string
 	Slot        string
+	Stance      specials.Stance `json:"stance"`
 	Properties  string
 }
 
@@ -61,12 +63,14 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 			}
 
 			id := abilityId(path)
+
 			abilityInfo := Info{
 				id,
 				reference.GetName(abilityMapping),
 				util.ToValidHtml(reference.GetDescription(abilityMapping)),
 				reference.Source(path),
 				parseAbilitySlot(abilityMapping.AbilityName),
+				GetStance(path),
 				reference.GetCurveProperties(abilityMapping),
 			}
 			//check if ability.info is inside array
@@ -82,6 +86,17 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 	util.Check(err)
 	err = util.WriteInfo("abilities.json", abilities)
 	util.Check(err, "abilities.json", abilities)
+}
+
+// GetStance Retrieves the Stance for a certain ability identified by the path argument.
+// The source (aka the hero it belongs to) is determined by reference.Source.
+// If a special parser could be determined the special parser is used to create the specials.Stance value.
+func GetStance(path string) specials.Stance {
+	specialParser := specials.Parsers[slug.Make(reference.Source(path))]
+	if specialParser != nil {
+		return specialParser.GetStance(path)
+	}
+	return specials.AllStances
 }
 
 // createBPUIAbilityMapping CParses hte "Properties" field inside a BP_UIAbility_* type and creates a mapping
