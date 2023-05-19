@@ -3,6 +3,7 @@ package character
 import (
 	"encoding/json"
 	"ever-parse/internal/reference"
+	"ever-parse/internal/specials"
 	"ever-parse/internal/util"
 	"os"
 	"path/filepath"
@@ -32,10 +33,11 @@ func (m BPPlayerMapping) GetDescriptionProperty() reference.PropertyReference {
 }
 
 type Info struct {
-	Id          string
-	Name        string
-	Description string
-	Role        string
+	Id            string
+	Name          string
+	Description   string
+	Role          string
+	StanceMapJson *string
 }
 
 // ParseCharacters Parses heroes and writes to the heroes.json file
@@ -46,6 +48,8 @@ func ParseCharacters(root string, group *sync.WaitGroup) {
 		if strings.HasPrefix(info.Name(), "BP_Player_") {
 			characterMapping := createBPPlayerMapping(path)
 			id := characterId(path)
+			// This is only loosely coupled with the ability parsing... But it's the best our current structure allows for.
+			specialParser := specials.Parsers[id]
 
 			// Generate character information and append to list
 			characterInfo := Info{
@@ -53,7 +57,9 @@ func ParseCharacters(root string, group *sync.WaitGroup) {
 				reference.GetName(characterMapping),
 				reference.GetDescription(characterMapping),
 				characterMapping.getRole(),
+				getStanceNameMapAsJson(specialParser),
 			}
+
 			if util.IsHeroWhitelisted(characterInfo.Id) {
 				characters = append(characters, characterInfo)
 				//Copy character images to output folder
@@ -68,6 +74,21 @@ func ParseCharacters(root string, group *sync.WaitGroup) {
 	util.Check(err)
 	err = util.WriteInfo("characters.json", characters)
 	util.Check(err, "Unable to write characters", characters)
+}
+
+// getStanceNameMapAsJson Retrieves the specials.Stance->StanceName map from the specific parser, if any exists.
+// The result is parsed into a JSON string.
+// This leads to an entry like { "StanceMapJson" : { "1":"FighterStance", "2":"DefenderStance" } }
+// This information is solely included to convert the numerical stance values into names on the website.
+func getStanceNameMapAsJson(parser *specials.StanceParser) *string {
+	if parser == nil {
+		return nil
+	}
+
+	jsonString, err := json.Marshal(parser.StanceResolver())
+	util.Check(err, parser.StanceResolver())
+	stringified := string(jsonString)
+	return &stringified
 }
 
 // createBPPlayerMapping creates a BPPlayerMapping from a BP_Player_* file
