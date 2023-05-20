@@ -37,7 +37,7 @@ type Info struct {
 	Name          string
 	Description   string
 	Role          string
-	StanceMapJson *string
+	StanceMapJson *string `json:"stance_map"`
 }
 
 // ParseCharacters Parses heroes and writes to the heroes.json file
