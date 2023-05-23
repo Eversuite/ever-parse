@@ -3,6 +3,7 @@ package main
 import (
 	"ever-parse/internal/ability"
 	"ever-parse/internal/character"
+	"ever-parse/internal/consumable"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/shard"
 	"ever-parse/internal/talent"
@@ -25,6 +26,7 @@ func main() {
 	parallelize(group, func() { shard.ParseShards(".", group) })
 	parallelize(group, func() { talent.ParseTalents(".", group) })
 	parallelize(group, func() { talent.ParseTalentTrees(".") })
+	parallelize(group, func() { consumable.ParseConsumables(".", group) })
 
 	group.Wait()
 
