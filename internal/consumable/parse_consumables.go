@@ -76,7 +76,7 @@ func fileWalker(consumables *[]ConsumableInfo, group *sync.WaitGroup) filepath.W
 			util.ToValidHtml(reference.GetDescription(consumableMapping)),
 		}
 		*consumables = append(*consumables, consumableInfo)
-		reference.CopyImageFile(consumableMapping.ConsumableIcon, consumableInfo.Id, group, "shard")
+		reference.CopyImageFile(consumableMapping.ConsumableIcon, consumableInfo.Id, group, "consumables")
 		return err
 	}
 }
