@@ -14,11 +14,11 @@ import (
 )
 
 type Mapping struct {
-	ShardIcon            reference.ObjectReference     `json:"AbilityIcon"`
-	ShardName            reference.PropertyReference   `json:"AbilityName"`
-	ShardDescription     reference.PropertyReference   `json:"AbilityDescription"`
-	ShardPreviewText     reference.PropertyReference   `json:"NextLevelPreviewText"`
-	ShardCurveProperties reference.CurveTableReference `json:"DescriptionValuesFromCurveTables"`
+	ShardIcon        reference.ObjectReference   `json:"AbilityIcon"`
+	ShardName        reference.PropertyReference `json:"AbilityName"`
+	ShardDescription reference.PropertyReference `json:"AbilityDescription"`
+	ShardPreviewText reference.PropertyReference `json:"NextLevelPreviewText"`
+	//	ShardCurveProperties reference.CurveTableReference `json:"DescriptionValuesFromCurveTables"`
 }
 
 func (m Mapping) GetNameProperty() reference.PropertyReference {
@@ -29,16 +29,16 @@ func (m Mapping) GetDescriptionProperty() reference.PropertyReference {
 	return m.ShardDescription
 }
 
-func (m Mapping) GetCurveProperty() reference.CurveTableReference {
-	return m.ShardCurveProperties
-}
+//func (m Mapping) GetCurveProperty() reference.CurveTableReference {
+//	return m.ShardCurveProperties
+//}
 
 type ShardInfo struct {
 	Id          string
 	Name        string
 	Description string
 	Source      string
-	Properties  string
+	//	Properties  string
 }
 
 func ParseShards(root string, group *sync.WaitGroup) {
@@ -83,7 +83,7 @@ func fileWalker(shards *[]ShardInfo, group *sync.WaitGroup) filepath.WalkFunc {
 			reference.GetName(abilityMapping),
 			util.ToValidHtml(reference.GetDescription(abilityMapping)),
 			reference.Source(path),
-			reference.GetCurveProperties(abilityMapping),
+			//			reference.GetCurveProperties(abilityMapping),
 		}
 		*shards = append(*shards, shardInfo)
 		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, group, "shard")

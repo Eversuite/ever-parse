@@ -16,11 +16,11 @@ import (
 
 // BPUIAbilityMapping represents the relevant "Properties" inside a BP_UIAbility_* type.
 type BPUIAbilityMapping struct {
-	AbilityIcon                      reference.ObjectReference
-	AbilityName                      reference.PropertyReference
-	AbilityDescription               reference.PropertyReference
-	NextLevelPreviewText             reference.PropertyReference
-	DescriptionValuesFromCurveTables reference.CurveTableReference
+	AbilityIcon          reference.ObjectReference
+	AbilityName          reference.PropertyReference
+	AbilityDescription   reference.PropertyReference
+	NextLevelPreviewText reference.PropertyReference
+	//DescriptionValuesFromCurveTables reference.CurveTableReference
 }
 
 type Info struct {
@@ -30,7 +30,7 @@ type Info struct {
 	Source      string
 	Slot        string
 	Stance      specials.Stance `json:"stance"`
-	Properties  string
+	//Properties  string
 }
 
 func (m BPUIAbilityMapping) GetNameProperty() reference.PropertyReference {
@@ -41,9 +41,9 @@ func (m BPUIAbilityMapping) GetDescriptionProperty() reference.PropertyReference
 	return m.AbilityDescription
 }
 
-func (m BPUIAbilityMapping) GetCurveProperty() reference.CurveTableReference {
+/*func (m BPUIAbilityMapping) GetCurveProperty() reference.CurveTableReference {
 	return m.DescriptionValuesFromCurveTables
-}
+}*/
 
 // ParseAbilities Parses hero abilities and writes to the abilities.json file
 func ParseAbilities(root string, group *sync.WaitGroup) {
@@ -71,7 +71,7 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 				reference.Source(path),
 				parseAbilitySlot(abilityMapping.AbilityName),
 				GetStance(path),
-				reference.GetCurveProperties(abilityMapping),
+				//reference.GetCurveProperties(abilityMapping),
 			}
 			//check if ability.info is inside array
 			if util.IsHeroWhitelisted(abilityInfo.Source) {
