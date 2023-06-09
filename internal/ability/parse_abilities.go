@@ -2,6 +2,7 @@ package ability
 
 import (
 	"encoding/json"
+	"ever-parse/internal/character"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/specials"
 	"ever-parse/internal/util"
@@ -74,7 +75,7 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 				//reference.GetCurveProperties(abilityMapping),
 			}
 			//check if ability.info is inside array
-			if util.IsHeroWhitelisted(abilityInfo.Source) {
+			if !character.IsBlacklisted(abilityInfo.Source) {
 				abilities = append(abilities, abilityInfo)
 				//Copy the ability icon to the output folder
 				reference.CopyImageFile(abilityMapping.AbilityIcon, id, group, "abilities")
@@ -82,7 +83,7 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 		}
 		return nil
 	})
-	//Write file containing all teh talents
+	//Write file containing all the abilities
 	util.Check(err)
 	err = util.WriteInfo("abilities.json", abilities)
 	util.Check(err, "abilities.json", abilities)

@@ -60,13 +60,15 @@ func ParseCharacters(root string, group *sync.WaitGroup) {
 				getStanceNameMapAsJson(specialParser),
 			}
 
-			if util.IsHeroWhitelisted(characterInfo.Id) {
+			if !IsBlacklisted(characterInfo.Id) {
 				characters = append(characters, characterInfo)
 				//Copy character images to output folder
 				reference.CopyImageFile(characterMapping.CharacterPreviewImage, id+"-preview", group, "characters", "preview")
 				reference.CopyImageFile(characterMapping.CharacterDefaultSkinImage, id+"-default", group, "characters", "default-skin")
-				reference.CopyImageFile(characterMapping.CharacterPortrait, id+"-portrait", group, "characters", "portraits")
+				reference.CopyImageFile(characterMapping.CharacterPortrait, id, group, "characters", "portraits")
 			}
+
+			characters = FixCharacterData(characters)
 		}
 		return nil
 	})

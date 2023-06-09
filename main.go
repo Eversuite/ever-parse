@@ -3,7 +3,6 @@ package main
 import (
 	"ever-parse/internal/ability"
 	"ever-parse/internal/character"
-	"ever-parse/internal/cleanup"
 	"ever-parse/internal/consumable"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/shard"
@@ -30,8 +29,6 @@ func main() {
 	parallelize(group, func() { consumable.ParseConsumables(".", group) })
 
 	group.Wait()
-
-	cleanup.CleanupCharacters()
 
 	fmt.Printf("Run took: %+v\n", time.Now().Sub(start))
 

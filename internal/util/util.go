@@ -91,32 +91,3 @@ func Ternary[T any](check bool, a, b T) T {
 		return b
 	}
 }
-
-func IsHeroWhitelisted(name string) bool {
-	var whitelist = [18]string{
-		"artillery-mage",
-		"berserker-tank",
-		"control-mage",
-		"dancer-d-p-s",
-		"ho-t-healer",
-		"mage-tank",
-		"melee-healer",
-		"melee-tank",
-		"mini-tank",
-		"movement-d-p-s",
-		"movement-tank",
-		"ranged-d-p-s",
-		"ranged-healer",
-		"spear-fighter",
-		"spell-d-p-s",
-		"spellcasting-d-p-s",
-		"spell-healer",
-		"tech-medic"}
-
-	for _, n := range whitelist {
-		if n == name {
-			return true
-		}
-	}
-	return false
-}

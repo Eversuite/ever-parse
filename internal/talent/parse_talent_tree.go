@@ -2,6 +2,7 @@ package talent
 
 import (
 	"encoding/json"
+	"ever-parse/internal/character"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
 	"os"
@@ -46,7 +47,7 @@ func ParseTalentTrees(root string) {
 			}
 			source := reference.Source(path)
 			id := GenerateTalentCategoryId(source, path)
-			if util.IsHeroWhitelisted(source) {
+			if character.IsBlacklisted(source) {
 				talentTrees = append(talentTrees, TreeInfo{
 					Id:          id,
 					Name:        reference.GetName(talentTreeMapping),

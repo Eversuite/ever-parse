@@ -85,8 +85,12 @@ func fileWalker(shards *[]ShardInfo, group *sync.WaitGroup) filepath.WalkFunc {
 			reference.Source(path),
 			//			reference.GetCurveProperties(abilityMapping),
 		}
-		*shards = append(*shards, shardInfo)
-		reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, group, "shard")
+
+		if !IsBlacklisted(shardInfo.Id) {
+			*shards = append(*shards, shardInfo)
+			reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, group, "shard")
+		}
+
 		return err
 	}
 }

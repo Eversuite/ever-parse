@@ -2,6 +2,7 @@ package talent
 
 import (
 	"encoding/json"
+	"ever-parse/internal/character"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/util"
 	"os"
@@ -64,7 +65,7 @@ func ParseTalents(root string, group *sync.WaitGroup) {
 				GenerateTalentCategoryId(hero, mpdMapping.MetaPowerCategory.ObjectPath),
 				mpdMapping.MetaPowerTierIndex,
 			}
-			if util.IsHeroWhitelisted(talentInfo.Hero) {
+			if character.IsBlacklisted(talentInfo.Hero) {
 				talents = append(talents, talentInfo)
 				//Copy the talent icon to the output folder
 				reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, group, "talent")
