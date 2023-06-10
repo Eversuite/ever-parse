@@ -47,7 +47,7 @@ func ParseTalentTrees(root string) {
 			}
 			source := reference.Source(path)
 			id := GenerateTalentCategoryId(source, path)
-			if character.IsBlacklisted(source) {
+			if !character.IsBlacklisted(source) {
 				talentTrees = append(talentTrees, TreeInfo{
 					Id:          id,
 					Name:        reference.GetName(talentTreeMapping),
