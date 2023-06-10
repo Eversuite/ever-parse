@@ -30,6 +30,7 @@ type Info struct {
 	Description string
 	Source      string
 	Slot        string
+	MetaPower   bool
 	Stance      specials.Stance `json:"stance"`
 	//Properties  string
 }
@@ -49,11 +50,12 @@ func (m BPUIAbilityMapping) GetDescriptionProperty() reference.PropertyReference
 // ParseAbilities Parses hero abilities and writes to the abilities.json file
 func ParseAbilities(root string, group *sync.WaitGroup) {
 	abilities := make([]Info, 0)
-	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	walkError := filepath.Walk(root, func(path string, info os.FileInfo, walkFnError error) error {
 		//Shards are also a BP_UIAbility type/file , just stored in a folder called "Shards". Skip them
 		if info.IsDir() && info.Name() == "Shards" {
 			return filepath.SkipDir
 		}
+
 		//Accept all the BP_UIAbility_* files not located inside the "Shards" and create mappings
 		if shouldParseFile(info.Name()) {
 			err, abilityMapping := createBPUIAbilityMapping(path)
@@ -71,6 +73,7 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 				util.ToValidHtml(reference.GetDescription(abilityMapping)),
 				reference.Source(path),
 				parseAbilitySlot(abilityMapping.AbilityName),
+				strings.Contains(strings.ToLower(path), "metapower"),
 				GetStance(path),
 				//reference.GetCurveProperties(abilityMapping),
 			}
@@ -87,9 +90,9 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 		return nil
 	})
 	//Write file containing all the abilities
-	util.Check(err)
-	err = util.WriteInfo("abilities.json", abilities)
-	util.Check(err, "abilities.json", abilities)
+	util.Check(walkError)
+	walkError = util.WriteInfo("abilities.json", abilities)
+	util.Check(walkError, "abilities.json", abilities)
 }
 
 // GetStance Retrieves the Stance for a certain ability identified by the path argument.
@@ -123,6 +126,7 @@ func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
 	} else {
 		abilityRawJson = gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
 	}
+
 	var abilityMapping BPUIAbilityMapping
 	err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
 	return err, abilityMapping
