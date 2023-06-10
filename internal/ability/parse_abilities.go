@@ -17,11 +17,11 @@ import (
 
 // BPUIAbilityMapping represents the relevant "Properties" inside a BP_UIAbility_* type.
 type BPUIAbilityMapping struct {
-	AbilityIcon          reference.ObjectReference
-	AbilityName          reference.PropertyReference
-	AbilityDescription   reference.PropertyReference
-	NextLevelPreviewText reference.PropertyReference
-	//DescriptionValuesFromCurveTables reference.CurveTableReference
+	AbilityIcon                      reference.ObjectReference
+	AbilityName                      reference.PropertyReference
+	AbilityDescription               reference.PropertyReference
+	NextLevelPreviewText             reference.PropertyReference
+	descriptionValuesFromCurveTables reference.CurveTableReference
 }
 
 type Info struct {
@@ -30,8 +30,9 @@ type Info struct {
 	Description string
 	Source      string
 	Slot        string
+	MetaPower   bool
 	Stance      specials.Stance `json:"stance"`
-	//Properties  string
+	Properties  string
 }
 
 func (m BPUIAbilityMapping) GetNameProperty() reference.PropertyReference {
@@ -42,18 +43,19 @@ func (m BPUIAbilityMapping) GetDescriptionProperty() reference.PropertyReference
 	return m.AbilityDescription
 }
 
-/*func (m BPUIAbilityMapping) GetCurveProperty() reference.CurveTableReference {
-	return m.DescriptionValuesFromCurveTables
-}*/
+func (m BPUIAbilityMapping) GetCurveProperty() reference.CurveTableReference {
+	return m.descriptionValuesFromCurveTables
+}
 
 // ParseAbilities Parses hero abilities and writes to the abilities.json file
 func ParseAbilities(root string, group *sync.WaitGroup) {
 	abilities := make([]Info, 0)
-	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+	walkError := filepath.Walk(root, func(path string, info os.FileInfo, walkFnError error) error {
 		//Shards are also a BP_UIAbility type/file , just stored in a folder called "Shards". Skip them
 		if info.IsDir() && info.Name() == "Shards" {
 			return filepath.SkipDir
 		}
+
 		//Accept all the BP_UIAbility_* files not located inside the "Shards" and create mappings
 		if shouldParseFile(info.Name()) {
 			err, abilityMapping := createBPUIAbilityMapping(path)
@@ -71,8 +73,9 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 				util.ToValidHtml(reference.GetDescription(abilityMapping)),
 				reference.Source(path),
 				parseAbilitySlot(abilityMapping.AbilityName),
+				strings.Contains(strings.ToLower(path), "metapower"),
 				GetStance(path),
-				//reference.GetCurveProperties(abilityMapping),
+				reference.GetCurveProperties(abilityMapping),
 			}
 			//check if ability.info is inside array
 			if !character.IsBlacklisted(abilityInfo.Source) {
@@ -87,9 +90,9 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 		return nil
 	})
 	//Write file containing all the abilities
-	util.Check(err)
-	err = util.WriteInfo("abilities.json", abilities)
-	util.Check(err, "abilities.json", abilities)
+	util.Check(walkError)
+	walkError = util.WriteInfo("abilities.json", abilities)
+	util.Check(walkError, "abilities.json", abilities)
 }
 
 // GetStance Retrieves the Stance for a certain ability identified by the path argument.
@@ -123,9 +126,50 @@ func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
 	} else {
 		abilityRawJson = gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
 	}
+
+	// Evaluate the field with GJson so we can determine if it's an array or not
+	ctDescription := gjson.Get(abilityRawJson, "DescriptionValuesFromCurveTables")
+
 	var abilityMapping BPUIAbilityMapping
 	err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
+	// But sometimes everything else already fails or no curve table values exist
+	if err != nil || ctDescription.Type == gjson.Null {
+		// In such a case we want to return early and let the calling function handle the error
+		return err, abilityMapping
+	}
+	// Now we fix our curve table values.
+	if !ctDescription.IsArray() {
+		// If it's an object we can use the usual unmarshal function of the json package... easy
+		var ctRef reference.CurveTableReference
+		err = json.Unmarshal([]byte(ctDescription.String()), &ctRef)
+		abilityMapping.descriptionValuesFromCurveTables = ctRef
+	} else {
+		// In case of an array we need to get a bit creative
+		abilityMapping.descriptionValuesFromCurveTables = fixCurveTableValues(ctDescription)
+	}
+
 	return err, abilityMapping
+}
+
+func fixCurveTableValues(res gjson.Result) reference.CurveTableReference {
+	results := res.Array()
+	// Under the hood a reference.CurveTableReference is nothing but a map of [string]CTREntry
+	entries := map[string]reference.CurveTableReferenceEntry{}
+
+	// Each entry of the gjson.Result array is its own entry to our CTR-Map
+	for _, result := range results {
+		// And here we can unmarshal it again using the json package
+		var entry map[string]reference.CurveTableReferenceEntry
+		err := json.Unmarshal([]byte(result.String()), &entry)
+		util.Check(err, "Fix table values")
+		// And add everything to the complete map
+		// This could technically cause an issue if a key ways present at least twice
+		// But I doubt that ever happens. It would cause way more issues for the ECH Devs than for us.
+		for key, value := range entry {
+			entries[key] = value
+		}
+	}
+	return entries
 }
 
 func abilityId(path string) string {
