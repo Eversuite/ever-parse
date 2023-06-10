@@ -80,6 +80,9 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 				//Copy the ability icon to the output folder
 				reference.CopyImageFile(abilityMapping.AbilityIcon, id, group, "abilities")
 			}
+
+			abilities = FixAbilityData(abilities)
+
 		}
 		return nil
 	})
