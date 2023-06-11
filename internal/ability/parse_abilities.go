@@ -127,49 +127,21 @@ func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
 		abilityRawJson = gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
 	}
 
-	// Evaluate the field with GJson so we can determine if it's an array or not
-	ctDescription := gjson.Get(abilityRawJson, "DescriptionValuesFromCurveTables")
-
 	var abilityMapping BPUIAbilityMapping
 	err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
+
+	// Evaluate the field with GJson so we can determine if it's an array or not
+	ctDescription := gjson.Get(abilityRawJson, "DescriptionValuesFromCurveTables")
 	// But sometimes everything else already fails or no curve table values exist
 	if err != nil || ctDescription.Type == gjson.Null {
 		// In such a case we want to return early and let the calling function handle the error
 		return err, abilityMapping
 	}
-	// Now we fix our curve table values.
-	if !ctDescription.IsArray() {
-		// If it's an object we can use the usual unmarshal function of the json package... easy
-		var ctRef reference.CurveTableReference
-		err = json.Unmarshal([]byte(ctDescription.String()), &ctRef)
-		abilityMapping.descriptionValuesFromCurveTables = ctRef
-	} else {
-		// In case of an array we need to get a bit creative
-		abilityMapping.descriptionValuesFromCurveTables = fixCurveTableValues(ctDescription)
-	}
+
+	err, fixedCurveValues := reference.FixCurveTableValues(ctDescription)
+	abilityMapping.descriptionValuesFromCurveTables = fixedCurveValues
 
 	return err, abilityMapping
-}
-
-func fixCurveTableValues(res gjson.Result) reference.CurveTableReference {
-	results := res.Array()
-	// Under the hood a reference.CurveTableReference is nothing but a map of [string]CTREntry
-	entries := map[string]reference.CurveTableReferenceEntry{}
-
-	// Each entry of the gjson.Result array is its own entry to our CTR-Map
-	for _, result := range results {
-		// And here we can unmarshal it again using the json package
-		var entry map[string]reference.CurveTableReferenceEntry
-		err := json.Unmarshal([]byte(result.String()), &entry)
-		util.Check(err, "Fix table values")
-		// And add everything to the complete map
-		// This could technically cause an issue if a key ways present at least twice
-		// But I doubt that ever happens. It would cause way more issues for the ECH Devs than for us.
-		for key, value := range entry {
-			entries[key] = value
-		}
-	}
-	return entries
 }
 
 func abilityId(path string) string {

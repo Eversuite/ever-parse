@@ -65,7 +65,7 @@ func ParseTalents(root string, group *sync.WaitGroup) {
 				GenerateTalentCategoryId(hero, mpdMapping.MetaPowerCategory.ObjectPath),
 				mpdMapping.MetaPowerTierIndex,
 			}
-			if character.IsBlacklisted(talentInfo.Hero) {
+			if !character.IsBlacklisted(talentInfo.Hero) {
 				talents = append(talents, talentInfo)
 				//Copy the talent icon to the output folder
 				reference.CopyImageFile(mpuiMapping.MetaPowerIcon, talentInfo.Id, group, "talent")

@@ -102,3 +102,40 @@ func interpolateLinearPoint(p1, p2 CurvePoint, x float64) float64 {
 	// use the slope and point1 to calculate the y-value for x
 	return slope*(x-p1.Time) + p1.Value
 }
+
+func FixCurveTableValues(ctDescription gjson.Result) (error, CurveTableReference) {
+	if ctDescription.Type == gjson.Null {
+		return nil, CurveTableReference{}
+	}
+
+	// Now we fix our curve table values.
+	if !ctDescription.IsArray() {
+		// If it's an object we can use the usual unmarshal function of the json package... easy
+		var ctRef CurveTableReference
+		err := json.Unmarshal([]byte(ctDescription.String()), &ctRef)
+		return err, ctRef
+	} else {
+		// In case of an array we need to get a bit creative
+		return fixArrayCurveTableValues(ctDescription)
+	}
+}
+
+func fixArrayCurveTableValues(res gjson.Result) (error, CurveTableReference) {
+	results := res.Array()
+	// Under the hood a reference.CurveTableReference is nothing but a map of [string]CTREntry
+	entries := map[string]CurveTableReferenceEntry{}
+	var err error = nil
+	// Each entry of the gjson.Result array is its own entry to our CTR-Map
+	for _, result := range results {
+		// And here we can unmarshal it again using the json package
+		var entry map[string]CurveTableReferenceEntry
+		err = json.Unmarshal([]byte(result.String()), &entry)
+		// And add everything to the complete map
+		// This could technically cause an issue if a key ways present at least twice
+		// But I doubt that ever happens. It would cause way more issues for the ECH Devs than for us.
+		for key, value := range entry {
+			entries[key] = value
+		}
+	}
+	return err, entries
+}
