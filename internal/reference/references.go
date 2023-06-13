@@ -38,6 +38,9 @@ const ProjectVImagePath = "icons"
 var whitespaceRegex = regexp.MustCompile("\\s")
 var jsonRegex = regexp.MustCompile("\\..*")
 
+const UnknownNameProperty = "UnknownNameProperty"
+const UnknownDescriptionProperty = "UnknownDescriptionProperty"
+
 // GetName resolves the actual name for the "name"-property of the DataMapping.
 // This is either done by resolving the corresponding table entry or the property's own `SourceString`-entry.
 func GetName(m DataMapping) string {
@@ -49,7 +52,7 @@ func GetName(m DataMapping) string {
 		return m.GetNameProperty().SourceString
 	}
 
-	return "UnknownNameProperty"
+	return UnknownNameProperty
 }
 
 // GetDescription resolves the actual description for the "Description"-property of the DataMapping.
@@ -62,7 +65,7 @@ func GetDescription(m DataMapping) string {
 		return m.GetDescriptionProperty().SourceString
 	}
 
-	return "UnknownDescriptionProperty"
+	return UnknownDescriptionProperty
 }
 
 func GetReferenceValue(propertyReference PropertyReference) string {

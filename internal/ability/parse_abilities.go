@@ -17,11 +17,17 @@ import (
 
 // BPUIAbilityMapping represents the relevant "Properties" inside a BP_UIAbility_* type.
 type BPUIAbilityMapping struct {
+	id                               string
+	tecName                          string
+	super                            *string
 	AbilityIcon                      reference.ObjectReference
 	AbilityName                      reference.PropertyReference
 	AbilityDescription               reference.PropertyReference
 	NextLevelPreviewText             reference.PropertyReference
 	descriptionValuesFromCurveTables reference.CurveTableReference
+	stance                           specials.Stance
+	source                           string
+	metapower                        bool
 }
 
 type Info struct {
@@ -50,6 +56,7 @@ func (m BPUIAbilityMapping) GetCurveProperty() reference.CurveTableReference {
 // ParseAbilities Parses hero abilities and writes to the abilities.json file
 func ParseAbilities(root string, group *sync.WaitGroup) {
 	abilities := make([]Info, 0)
+	mappings := make([]BPUIAbilityMapping, 0)
 	walkError := filepath.Walk(root, func(path string, info os.FileInfo, walkFnError error) error {
 		//Shards are also a BP_UIAbility type/file , just stored in a folder called "Shards". Skip them
 		if info.IsDir() && info.Name() == "Shards" {
@@ -64,33 +71,51 @@ func ParseAbilities(root string, group *sync.WaitGroup) {
 				println("Error:" + err.Error())
 				return nil
 			}
-
 			id := abilityId(path)
-
-			abilityInfo := Info{
-				id,
-				reference.GetName(abilityMapping),
-				util.ToValidHtml(reference.GetDescription(abilityMapping)),
-				reference.Source(path),
-				parseAbilitySlot(abilityMapping.AbilityName),
-				strings.Contains(strings.ToLower(path), "metapower"),
-				GetStance(path),
-				reference.GetCurveProperties(abilityMapping),
-			}
-			//check if ability.info is inside array
-			if !character.IsBlacklisted(abilityInfo.Source) {
-				abilities = append(abilities, abilityInfo)
-				//Copy the ability icon to the output folder
-				reference.CopyImageFile(abilityMapping.AbilityIcon, id, group, "abilities")
-			}
-
-			abilities = FixAbilityData(abilities)
-
+			abilityMapping.id = id
+			abilityMapping.stance = GetStance(path)
+			abilityMapping.source = reference.Source(path)
+			abilityMapping.metapower = strings.Contains(strings.ToLower(path), "metapower")
+			mappings = append(mappings, abilityMapping)
 		}
+
 		return nil
 	})
+
 	//Write file containing all the abilities
 	util.Check(walkError)
+
+	for _, abilityMapping := range mappings {
+		var superMapping *BPUIAbilityMapping = nil
+		if abilityMapping.super != nil {
+			for _, other := range mappings {
+				if other.tecName == *abilityMapping.super {
+					superMapping = &other
+					break
+				}
+			}
+		}
+
+		abilityInfo := Info{
+			abilityMapping.id,
+			GetAbilityName(abilityMapping, superMapping),
+			util.ToValidHtml(GetAbilityDescription(abilityMapping, superMapping)),
+			abilityMapping.source,
+			parseAbilitySlot(abilityMapping, superMapping),
+			abilityMapping.metapower,
+			abilityMapping.stance,
+			GetAbilityCurveValues(abilityMapping, superMapping),
+		}
+		//check if ability.info is inside array
+		if !character.IsBlacklisted(abilityInfo.Source) {
+			abilities = append(abilities, abilityInfo)
+			//Copy the ability icon to the output folder
+			reference.CopyImageFile(abilityMapping.AbilityIcon, abilityMapping.id, group, "abilities")
+		}
+
+		abilities = FixAbilityData(abilities)
+	}
+
 	walkError = util.WriteInfo("abilities.json", abilities)
 	util.Check(walkError, "abilities.json", abilities)
 }
@@ -121,14 +146,26 @@ func createBPUIAbilityMapping(path string) (error, BPUIAbilityMapping) {
 	content, err := os.ReadFile(path)
 	util.Check(err, path)
 	var abilityRawJson = ""
+	rawJSON := string(content)
 	if strings.Contains(path, "BP_MageTank_UIAbility_Mist") {
-		abilityRawJson = gjson.Get(string(content), "#(Type%\"BP_MageTank_UIAbility_Mist*\")#|0.Properties").String()
+		abilityRawJson = gjson.Get(rawJSON, "#(Type%\"BP_MageTank_UIAbility_Mist*\")#|0.Properties").String()
 	} else {
-		abilityRawJson = gjson.Get(string(content), "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
+		abilityRawJson = gjson.Get(rawJSON, "#(Type%\"BP_UIAbility*\")#|0.Properties").String()
 	}
 
 	var abilityMapping BPUIAbilityMapping
 	err = json.Unmarshal([]byte(abilityRawJson), &abilityMapping)
+
+	tecName := gjson.Get(rawJSON, "#(Name%BP_*UIAbility*_C)#|0.Name")
+	if tecName.Type != gjson.Null {
+		abilityMapping.tecName = tecName.String()
+	}
+
+	super := gjson.Get(rawJSON, "#(Super%BP_*UIAbility*_C)#|0.Super")
+	if super.Type != gjson.Null {
+		local := super.String()
+		abilityMapping.super = &local
+	}
 
 	// Evaluate the field with GJson so we can determine if it's an array or not
 	ctDescription := gjson.Get(abilityRawJson, "DescriptionValuesFromCurveTables")
@@ -154,9 +191,13 @@ func abilityId(path string) string {
 	return slug.Make(reference.GenerateId(path, delimiter))
 }
 
-func parseAbilitySlot(abilityReference reference.PropertyReference) string {
-	if abilityReference.Key == "" {
-		return ""
+func parseAbilitySlot(m BPUIAbilityMapping, superMapping *BPUIAbilityMapping) string {
+	if m.AbilityName.Key != "" {
+		return m.AbilityName.Key[0:1]
 	}
-	return abilityReference.Key[0:1]
+	if superMapping != nil && superMapping.AbilityName.Key != "" {
+		return superMapping.AbilityName.Key[0:1]
+	}
+
+	return ""
 }
