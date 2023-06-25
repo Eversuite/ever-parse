@@ -1,10 +1,14 @@
 package shard
 
 func IsBlacklisted(name string) bool {
-	var blacklist = [49]string{
+	var blacklist = []string{
 		"armour",
+		"ashen-armour-melting",
 		"attack-speed-star",
 		"backwards-shot",
+		"boss-shard-enrage",
+		"boss-shard-flametouch",
+		"boss-shard-max-health",
 		"chaotic-swirl",
 		"charge-shield",
 		"clip-discharge",
@@ -18,11 +22,13 @@ func IsBlacklisted(name string) bool {
 		"echoing-fissure",
 		"enveloping-flames",
 		"extended-range",
+		"ghost-pepper",
 		"healing-buff-petals",
 		"healing-swap",
 		"health-sprout-overflow",
 		"heat-pressure",
 		"ignite-bomb",
+		"luum-fissure",
 		"noxious-bloom",
 		"protection",
 		"protective-slash",
@@ -38,6 +44,7 @@ func IsBlacklisted(name string) bool {
 		"slash-armour-debuff",
 		"slide-auto-reload",
 		"slide-evasive-manouvers",
+		"sorcerers-gloves",
 		"speed-boost",
 		"split-beam",
 		"spread-shot",
