@@ -18,7 +18,7 @@ Script for parsing data from Evercore Heroes after it's been exported.
 2. Run FModel
 3. Select to the evercore-heroes folder in the directory selector
 4. Open Settings in the top bar
-   1. Set the UE Versions drop down to latest UE5 version
+   1. Set the UE Versions drop down to UE5_1
    2. Check the Local Mapping option and select the mappings file you created in the previous step.
    3. Navigate to the Models tab and check Auto-Export without Previewing for all the options there.
    4. Press OK
