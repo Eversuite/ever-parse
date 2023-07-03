@@ -37,6 +37,7 @@ type ShardInfo struct {
 	Id          string
 	Name        string
 	Description string
+	Type        string
 	Source      string
 	Properties  string
 }
@@ -47,8 +48,13 @@ func ParseShards(root string, group *sync.WaitGroup) {
 	err := filepath.WalkDir(root, dirWalker(&shards, group))
 	util.Check(err, root, shards)
 
+	shopShards := ParseShops(".")
+
+	shards = populateTypeAndSource(&shards, shopShards)
+
 	err = util.WriteInfo("shards.json", shards)
 	util.Check(err, "shards.json", shards)
+
 }
 
 func dirWalker(shards *[]ShardInfo, group *sync.WaitGroup) fs.WalkDirFunc {
@@ -87,7 +93,8 @@ func fileWalker(shards *[]ShardInfo, group *sync.WaitGroup) filepath.WalkFunc {
 			id,
 			reference.GetName(abilityMapping),
 			util.ToValidHtml(reference.GetDescription(abilityMapping)),
-			reference.Source(path),
+			"",
+			"Random drop",
 			reference.GetCurveProperties(abilityMapping),
 		}
 
@@ -95,7 +102,6 @@ func fileWalker(shards *[]ShardInfo, group *sync.WaitGroup) filepath.WalkFunc {
 			*shards = append(*shards, shardInfo)
 			reference.CopyImageFile(abilityMapping.ShardIcon, shardInfo.Id, group, "shard")
 		}
-
 		return err
 	}
 }
@@ -103,4 +109,16 @@ func fileWalker(shards *[]ShardInfo, group *sync.WaitGroup) filepath.WalkFunc {
 func shardId(path string) string {
 	delimiter := "BP_UIAbility_"
 	return reference.GenerateId(path, delimiter)
+}
+
+func populateTypeAndSource(shardInfo *[]ShardInfo, ShardShopInfo []ShopInfo) []ShardInfo {
+	for i, shard := range *shardInfo {
+		for _, shopShard := range ShardShopInfo {
+			if shard.Id == shopShard.Id {
+				(*shardInfo)[i].Type = shopShard.Type
+				(*shardInfo)[i].Source = shopShard.Source
+			}
+		}
+	}
+	return *shardInfo
 }
