@@ -2,7 +2,6 @@ package character
 
 func IsBlacklisted(name string) bool {
 	var blacklist = [2]string{
-		"chef-support",
 		"gun-d-p-s",
 	}
 

@@ -1,8 +1,12 @@
 package main
 
 import (
+	"ever-parse/internal/ability"
+	"ever-parse/internal/character"
+	"ever-parse/internal/consumable"
 	"ever-parse/internal/reference"
 	"ever-parse/internal/shard"
+	"ever-parse/internal/talent"
 	"ever-parse/internal/util"
 	"fmt"
 	"os"
@@ -17,12 +21,12 @@ func main() {
 	cleanupPreviousRun()
 	group := &sync.WaitGroup{}
 
-	//parallelize(group, func() { ability.ParseAbilities(".", group) })
-	//parallelize(group, func() { character.ParseCharacters(".", group) })
+	parallelize(group, func() { ability.ParseAbilities(".", group) })
+	parallelize(group, func() { character.ParseCharacters(".", group) })
 	parallelize(group, func() { shard.ParseShards(".", group) })
-	//parallelize(group, func() { talent.ParseTalents(".", group) })
-	//parallelize(group, func() { talent.ParseTalentTrees(".") })
-	//parallelize(group, func() { consumable.ParseConsumables(".", group) })
+	parallelize(group, func() { talent.ParseTalents(".", group) })
+	parallelize(group, func() { talent.ParseTalentTrees(".") })
+	parallelize(group, func() { consumable.ParseConsumables(".", group) })
 
 	group.Wait()
 
