@@ -3,6 +3,8 @@ package util
 import (
 	"encoding/json"
 	"fmt"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -90,4 +92,9 @@ func Ternary[T any](check bool, a, b T) T {
 	} else {
 		return b
 	}
+}
+
+func KebabToTitle(s string) string {
+	caser := cases.Title(language.English)
+	return caser.String(strings.ReplaceAll(s, "-", " "))
 }
