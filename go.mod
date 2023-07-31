@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/gosimple/slug v1.13.1
-	github.com/tidwall/gjson v1.14.4
+	github.com/tidwall/gjson v1.15.0
 	golang.org/x/text v0.10.0
 )
 
